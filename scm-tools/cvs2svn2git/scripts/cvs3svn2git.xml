@@ -2,12 +2,15 @@
 
     <!-- arguments definitions -->    
 
-    <property name="cvs2svn.tool.folder" value="/Users/Yoram/Documents/Projects/Earnix/cvs2svn-trunk"/>
-    <property name="cvs.repository.root" value="/Users/Yoram/Documents/Projects/Earnix/cvs/Repos"/>
-    <property name="repository.name" value="EO"/>
-    <property name="authors.file.path" value="/Users/Yoram/Documents/Projects/Earnix/authors-transform.txt"/>
-    <property name="git.remote.uri" value="git@gitcore:dryrun/EO2.git"/>
-    
+<!-- 
+    Those properties should be passed to the script from outside (using -D). Here are example of values:
+    <property name="cvs2svn.tool.folder" value="~/tools/cvs2svn-trunk"/>
+    <property name="cvs.repository.root" value="~/scm/cvs/Repos"/>
+    <property name="repository.name" value="OurProject"/>
+    <property name="authors.file.path" value="~/info/authors-transform.txt"/>
+    <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
+ -->
+     
     <!-- global definitions -->    
 
     <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
