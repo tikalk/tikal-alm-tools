@@ -1,0 +1,214 @@
+<project name="cvs2svn2git" default="cvs2svn2git:main">
+
+    <!-- arguments definitions -->    
+
+    <property name="cvs2svn.tool.folder" value="/Users/Yoram/Documents/Projects/Earnix/cvs2svn-trunk"/>
+    <property name="cvs.repository.root" value="/Users/Yoram/Documents/Projects/Earnix/cvs/Repos"/>
+    <property name="repository.name" value="EO"/>
+    <property name="authors.file.path" value="/Users/Yoram/Documents/Projects/Earnix/authors-transform.txt"/>
+    <property name="git.remote.uri" value="git@gitcore:dryrun/EO2.git"/>
+    
+    <!-- global definitions -->    
+
+    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
+    <property name="cvs2svn.tool.path" value="${cvs2svn.tool.folder}/cvs2svn"/>
+	<property name="cvs2svn2git.work.folder" value="${temp.root.folder}/${repository.name}"/>
+
+<scriptdef name="techo" language="javascript">
+ <attribute name="message"/>
+
+<![CDATA[
+function getTimeStamp() {
+    var now = new Date();
+    return ((now.getDate()) + '/' +
+             (now.getMonth() + 1) + '/' +
+             now.getFullYear() + " " +
+             now.getHours() + ':' +
+             ((now.getMinutes() < 10)
+                 ? ("0" + now.getMinutes())
+                 : (now.getMinutes())) + ':' +
+             ((now.getSeconds() < 10)
+                 ? ("0" + now.getSeconds())
+                 : (now.getSeconds())));
+}
+    tstamp = getTimeStamp();
+    self.log(attributes.get("message") +" ["+tstamp+"]");
+]]>
+</scriptdef>
+    
+	<!-- targets -->    
+    
+   	<target name="cvs2svn2git:validations">
+    	<techo taskname="cvs2svn2git"  message="[start] validations"/>
+    	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
+    	<fail message="Path to authors file (property name: authors.file.path) wasn't defined" unless="authors.file.path"/>
+    	<fail message="Path to CVS root folder (property name: cvs.repository.root) wasn't defined" unless="cvs.repository.root"/>
+    	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
+    		
+    	<condition property="cvs2svn.tool.path.exist">
+    	    <available file="${cvs2svn.tool.path}"/>
+    	</condition>
+    	<fail message="cvs2svn command (${cvs2svn.tool.path}) not exists (maybe you should build it first?)" unless="cvs2svn.tool.path.exist"/>
+    	<condition property="authors.file.path.exist">
+    	    <available file="${authors.file.path}"/>
+    	</condition>
+    	<fail message="Authors file doesn't exists (${authors.file.path.exist})" unless="authors.file.path.exist"/>
+    	<condition property="cvs.repository.root.exist">
+    	    <available file="${cvs.repository.root}"/>
+    	</condition>
+    	<fail message="CVS repository root doesn't exists (${cvs.repository.root})" unless="cvs.repository.root.exist"/>
+    	<techo taskname="cvs2svn2git" message="[end] validations"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:run-command">
+    	<techo taskname="cvs2svn2git" message="[start] run command: ${run-command.executable} ${run-command.command.line}"/>
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" failonerror="true">
+    	    <arg line="${run-command.command.line}"/>
+    	</exec>
+    	<techo taskname="cvs2svn2git" message="[end] run command"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:init" depends="cvs2svn2git:validations">
+    	<techo taskname="cvs2svn2git" message="[start] init"/>
+    	<delete dir="${cvs2svn2git.work.folder}"/>
+    	<mkdir dir="${cvs2svn2git.work.folder}"/>
+    	<techo taskname="cvs2svn2git" message="[end] init"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:main" depends="cvs2svn2git:init">
+    	<techo taskname="cvs2svn2git" message="[start] main"/>
+   	    <antcall target="cvs2svn2git:cvs-clone"/>  
+    	<antcall target="cvs2svn2git:cvs2svn"/>  
+    	<antcall target="cvs2svn2git:svn2git"/>  
+    	<antcall target="cvs2svn2git:git-prepare-for-push"/>  
+    	<antcall target="cvs2svn2git:git-push"/>  
+    	<techo taskname="cvs2svn2git" message="[end] main"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:cvs-clone">
+    	<techo taskname="cvs2svn2git" message="[start] cvs-clone"/>
+    	<techo taskname="cvs2svn2git" message="[end] cvs-clone"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:cvs2svn">
+    	<techo taskname="cvs2svn2git" message="[start] cvs2svn"/>
+    	<property name="cvs2svn.command.arguments" value="--username=cvs2svn2git --fallback-encoding=utf8 --svnrepos ${cvs2svn2git.work.folder}/svn ${cvs.repository.root}/${repository.name}"/>
+    	<antcall target="cvs2svn2git:run-command">
+    	    <param name="run-command.task-name" value="cvs2svn2git:cvs2svn"/>
+    	    <param name="run-command.executable" value="${cvs2svn.tool.path}"/>
+    	    <param name="run-command.command.line" value="${cvs2svn.command.arguments}"/>
+    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}"/>
+    	</antcall>
+    	<techo taskname="cvs2svn2git" message="[end] cvs2svn"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:svn2git">
+    	<techo taskname="cvs2svn2git" message="[start] svn2git"/>
+    	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=cvs2svn2git/ --no-follow-parent --authors-file=${authors.file.path} file://${cvs2svn2git.work.folder}/svn ${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	<mkdir dir="${cvs2svn2git.work.folder}/git"/>
+    	<antcall target="cvs2svn2git:run-command">
+    	    <param name="run-command.task-name" value="cvs2svn2git:svn2git"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
+    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git"/>
+    	</antcall>
+    	<techo taskname="cvs2svn2git" message="[end] svn2git"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:git-prepare-for-push">
+    	<techo taskname="cvs2svn2git" message="[start] git-prepare-for-push"/>
+
+<script language="javascript"> <![CDATA[
+
+      // import statements
+      // importPackage(java.io);
+      importClass(java.io.File);
+
+	String.prototype.startsWith = function(s)
+	{
+   		if( this.indexOf(s) == 0 ) return true;
+   		return false;
+	}
+
+      // Access to Ant-Properties by their names
+      dir = project.getProperty("cvs2svn2git.work.folder") + "/git/" + project.getProperty("repository.name");
+      execBranchesList = cvs2svn2git.createTask("exec");
+      execBranchesList.setDir(new File(dir));
+      execBranchesList.setExecutable("git");
+      execBranchesList.createArg().setLine("branch -a");
+      execBranchesList.setOutputproperty("branches.list");
+      execBranchesList.execute();
+      var branchesList = project.getProperty("branches.list");
+      self.setTaskName("cvs2svn2git:svn2git");
+      var branches = branchesList.split("\n");
+	  var numLines = branches.length;
+	  var i;
+      var currentSection;
+      var sections = Array();
+      var phrases = Array();
+
+      // parse phrases
+      for (i = 0; i < numLines; i++) {
+         var currentBranch = branches[i].trim();
+         
+         if(currentBranch.startsWith("remotes/cvs2svn2git/"))
+         {
+            if(currentBranch.startsWith("remotes/cvs2svn2git/tags"))
+         	{
+         		var tagName = currentBranch.substring(25);
+			    execCheckoutTag = cvs2svn2git.createTask("exec");
+			    execCheckoutTag.setDir(new File(dir));
+			    execCheckoutTag.setExecutable("git");
+			    execCheckoutTag.createArg().setLine("checkout "+currentBranch);
+			    execCheckoutTag.execute();
+			    execCreateTag = cvs2svn2git.createTask("exec");
+			    execCreateTag.setDir(new File(dir));
+			    execCreateTag.setExecutable("git");
+			    execCreateTag.createArg().setLine("tag "+tagName);
+			    execCreateTag.execute();
+           	}
+           	else
+           	{
+           		if("remotes/cvs2svn2git/trunk" != currentBranch)
+           		{
+         			var branchName = currentBranch.substring(20);
+				    execCheckoutBranch = cvs2svn2git.createTask("exec");
+				    execCheckoutBranch.setDir(new File(dir));
+				    execCheckoutBranch.setExecutable("git");
+				    execCheckoutBranch.createArg().setLine("checkout -b "+branchName + " " + currentBranch);
+				    execCheckoutBranch.execute();
+           		}
+           	}
+         }
+      }
+
+    ]]>
+ </script>
+ 
+		<techo taskname="cvs2svn2git" message="[end] git-prepare-for-push"/>
+   	</target> 
+   
+   	<target name="cvs2svn2git:git-push">
+    	<techo taskname="cvs2svn2git" message="[start] git-push"/>
+    	<antcall target="cvs2svn2git:run-command">
+    	    <param name="run-command.task-name" value="cvs2svn2git:set-remote"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="remote add origin ${git.remote.uri}"/>
+    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="cvs2svn2git:run-command">
+    	    <param name="run-command.task-name" value="cvs2svn2git:push-branches"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="push origin --all -v"/>
+    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="cvs2svn2git:run-command">
+    	    <param name="run-command.task-name" value="cvs2svn2git:push-tags"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="push origin --tags -v"/>
+    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<techo taskname="cvs2svn2git"  message="[end] git-push"/>
+   	</target> 
+   				
+ </project>
