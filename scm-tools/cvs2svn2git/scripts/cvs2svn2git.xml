@@ -9,11 +9,11 @@
     <property name="repository.name" value="OurProject"/>
     <property name="authors.file.path" value="~/info/authors-transform.txt"/>
     <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
+    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
  -->
      
     <!-- global definitions -->    
 
-    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
     <property name="cvs2svn.tool.path" value="${cvs2svn.tool.folder}/cvs2svn"/>
 	<property name="cvs2svn2git.work.folder" value="${temp.root.folder}/${repository.name}"/>
 
