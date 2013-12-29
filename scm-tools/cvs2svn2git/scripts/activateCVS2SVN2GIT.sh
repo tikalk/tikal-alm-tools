@@ -25,6 +25,4 @@ if [ "x$1" = "x" ] || [ "x$2" = "x" ] || [ "x$3" = "x" ] || [ "x$4" = "x" ] || [
   exit -1
 fi
 
-echo cvs2svn.tool.folder=$cvs2svn_tool_folder
-
 ant -buildfile cvs2svn2git.xml -Dcvs2svn.tool.folder=$cvs2svn_tool_folder -Dcvs.repository.root=$cvs_repository_root -Drepository.name=$repository_name -Dauthors.file.path=$authors_file_path -Dgit.remote.uri=$git_remote_uri

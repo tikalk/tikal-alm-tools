@@ -163,11 +163,13 @@ function getTimeStamp() {
 			    execCheckoutTag.setDir(new File(dir));
 			    execCheckoutTag.setExecutable("git");
 			    execCheckoutTag.createArg().setLine("checkout "+currentBranch);
+			    execCheckoutTag.getTaskName("cvs2svn2git:git-checkout");
 			    execCheckoutTag.execute();
 			    execCreateTag = cvs2svn2git.createTask("exec");
 			    execCreateTag.setDir(new File(dir));
 			    execCreateTag.setExecutable("git");
 			    execCreateTag.createArg().setLine("tag "+tagName);
+			    execCheckoutTag.getTaskName("cvs2svn2git:git-tag");
 			    execCreateTag.execute();
            	}
            	else
@@ -179,6 +181,7 @@ function getTimeStamp() {
 				    execCheckoutBranch.setDir(new File(dir));
 				    execCheckoutBranch.setExecutable("git");
 				    execCheckoutBranch.createArg().setLine("checkout -b "+branchName + " " + currentBranch);
+			   		execCheckoutBranch.getTaskName("cvs2svn2git:git-checkout");
 				    execCheckoutBranch.execute();
            		}
            	}
