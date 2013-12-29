@@ -217,4 +217,55 @@ function getTimeStamp() {
     	<techo taskname="cvs2svn2git"  message="[end] git-push"/>
    	</target> 
    				
- </project>
+   	<target name="cvs2svn2git:build-draft-authors-file">
+    	<techo taskname="cvs2svn2git" message="[start] build draft authors file"/>
+
+<script language="javascript"> <![CDATA[
+
+      // import statements
+      // importPackage(java.io);
+      importClass(java.io.File);
+
+	String.prototype.startsWith = function(s)
+	{
+   		if( this.indexOf(s) == 0 ) return true;
+   		return false;
+	}
+
+      echoFileTask = cvs2svn2git.createTask("echo");
+      authorsFileTemplate = project.getProperty("authors.file.path");
+      echoFileTask.setFile(new File(authorsFileTemplate));
+      echoFileTask.setMessage("cvs2svn2git = cvs2svn2git <cvs2svn2git>\n");
+      echoFileTask.execute();
+      
+      echoFileTask.setAppend(true);
+      // Access to Ant-Properties by their names
+      passwdFile = project.getProperty("cvs.repository.root") + "/" + project.getProperty("repository.name") + "/CVSROOT/passwd";
+      
+      loadFileTask = cvs2svn2git.createTask("loadfile");
+      loadFileTask.setSrcFile(new File(passwdFile));
+      loadFileTask.setProperty("passwdContent");
+      loadFileTask.execute();
+      var passwdList = project.getProperty("passwdContent");
+      var lines = passwdList.split("\n");
+	  var numLines = lines.length;
+	  var i;
+      var currentSection;
+      var sections = Array();
+      var phrases = Array();
+
+      // parse phrases
+      for (i = 0; i < numLines; i++) {
+         var currentLine = lines[i].trim();
+         currentUser = currentLine.substring(0,currentLine.indexOf(":")); 
+	     echoFileTask.setMessage(currentUser+" = "+currentUser+" <"+currentUser+">\n");
+	     echoFileTask.execute();
+      }
+
+    ]]>
+ </script>
+ 
+		<techo taskname="cvs2svn2git" message="[end] build draft authors file"/>
+   	</target> 
+   
+</project>
