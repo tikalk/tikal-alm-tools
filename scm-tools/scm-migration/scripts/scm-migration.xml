@@ -1,11 +1,20 @@
-<project name="cvs2svn2git" default="cvs2svn2git:main">
+<project name="scmMigration">
 
     <!-- arguments definitions -->    
 
 <!-- 
-    Those properties should be passed to the script from outside (using -D). Here are example of values:
+    Those properties should be passed to the script from outside (using -D) for the CVS2GIT migration. Here are example of values:
     <property name="cvs2svn.tool.folder" value="~/tools/cvs2svn-trunk"/>
     <property name="cvs.repository.root" value="~/scm/cvs/Repos"/>
+    <property name="repository.name" value="OurProject"/>
+    <property name="authors.file.path" value="~/info/authors-transform.txt"/>
+    <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
+    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
+    <property name="gitignore.file.path" value="${basedir}/../templates/Gitignore/empty.gitignore"/>
+ -->
+     
+<!-- 
+    Those properties should be passed to the script from outside (using -D) for the SVN2GIT migration. Here are example of values:
     <property name="repository.name" value="OurProject"/>
     <property name="authors.file.path" value="~/info/authors-transform.txt"/>
     <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
@@ -16,7 +25,7 @@
     <!-- global definitions -->    
 
     <property name="cvs2svn.tool.path" value="${cvs2svn.tool.folder}/cvs2svn"/>
-	<property name="cvs2svn2git.work.folder" value="${temp.root.folder}/${repository.name}"/>
+	<property name="scm-migration.work.folder" value="${temp.root.folder}/${repository.name}"/>
 
 <scriptdef name="techo" language="javascript">
  <attribute name="message"/>
@@ -40,10 +49,32 @@ function getTimeStamp() {
 ]]>
 </scriptdef>
     
-	<!-- targets -->    
+ 	<!-- general targets -->    
     
-   	<target name="cvs2svn2git:validations">
-    	<techo taskname="cvs2svn2git"  message="[start] validations"/>
+   	<target name="scm-migration:general:run-command">
+    	<techo taskname="scm-migration" message="[start] run command: ${run-command.executable} ${run-command.command.line}"/>
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" failonerror="true">
+    	    <arg line="${run-command.command.line}"/>
+    	</exec>
+    	<techo taskname="scm-migration" message="[end] run command"/>
+   	</target> 
+   	
+	<!-- CVS2GIT migration targets -->
+   
+   	<target name="scm-migration:cvs2git:main">
+    	<techo taskname="scm-migration" message="[start] main"/>
+   	    <antcall target="scm-migration:cvs2git:validations"/>  
+   	    <antcall target="scm-migration:cvs2git:init"/>  
+    	<antcall target="scm-migration:cvs2svn"/>  
+    	<antcall target="scm-migration:svn2git">
+    	    <param name="svn.repository.url" value="file://${scm-migration.work.folder}/svn ${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>  
+    	<antcall target="scm-migration:git-push-flow"/>  
+    	<techo taskname="scm-migration" message="[end] main"/>
+   	</target> 
+   
+   	<target name="scm-migration:cvs2git:validations">
+    	<techo taskname="scm-migration"  message="[start] validations"/>
     	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
     	<fail message="Path to authors file (property name: authors.file.path) wasn't defined" unless="authors.file.path"/>
     	<fail message="Path to CVS root folder (property name: cvs.repository.root) wasn't defined" unless="cvs.repository.root"/>
@@ -65,70 +96,54 @@ function getTimeStamp() {
     	    <available file="${temp.root.folder}"/>
     	</condition>
     	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
-     	<condition property="gitignore.file.path.exist">
+<!--      	<condition property="gitignore.file.path.exist">
     	    <available file="${gitignore.file.path}"/>
     	</condition>
-    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/>
- 		<techo taskname="cvs2svn2git" message="[end] validations"/>
+    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/> -->
+ 		<techo taskname="scm-migration" message="[end] validations"/>
    	</target> 
 
-   	<target name="cvs2svn2git:run-command">
-    	<techo taskname="cvs2svn2git" message="[start] run command: ${run-command.executable} ${run-command.command.line}"/>
-    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" failonerror="true">
-    	    <arg line="${run-command.command.line}"/>
-    	</exec>
-    	<techo taskname="cvs2svn2git" message="[end] run command"/>
+   	<target name="scm-migration:cvs2git:init">
+    	<techo taskname="scm-migration" message="[start] init"/>
+    	<delete dir="${scm-migration.work.folder}"/>
+    	<mkdir dir="${scm-migration.work.folder}"/>
+    	<techo taskname="scm-migration" message="[end] init"/>
    	</target> 
    
-   	<target name="cvs2svn2git:init" depends="cvs2svn2git:validations">
-    	<techo taskname="cvs2svn2git" message="[start] init"/>
-    	<delete dir="${cvs2svn2git.work.folder}"/>
-    	<mkdir dir="${cvs2svn2git.work.folder}"/>
-    	<techo taskname="cvs2svn2git" message="[end] init"/>
-   	</target> 
-   
-   	<target name="cvs2svn2git:main" depends="cvs2svn2git:init">
-    	<techo taskname="cvs2svn2git" message="[start] main"/>
-   	    <antcall target="cvs2svn2git:cvs-clone"/>  
-    	<antcall target="cvs2svn2git:cvs2svn"/>  
-    	<antcall target="cvs2svn2git:svn2git"/>  
-    	<antcall target="cvs2svn2git:git-prepare-for-push"/>  
-    	<antcall target="cvs2svn2git:git-push"/>  
-    	<techo taskname="cvs2svn2git" message="[end] main"/>
-   	</target> 
-   
-   	<target name="cvs2svn2git:cvs-clone">
-    	<techo taskname="cvs2svn2git" message="[start] cvs-clone"/>
-    	<techo taskname="cvs2svn2git" message="[end] cvs-clone"/>
-   	</target> 
-   
-   	<target name="cvs2svn2git:cvs2svn">
-    	<techo taskname="cvs2svn2git" message="[start] cvs2svn"/>
-    	<property name="cvs2svn.command.arguments" value="--username=cvs2svn2git --fallback-encoding=utf8 --svnrepos ${cvs2svn2git.work.folder}/svn ${cvs.repository.root}/${repository.name}"/>
-    	<antcall target="cvs2svn2git:run-command">
-    	    <param name="run-command.task-name" value="cvs2svn2git:cvs2svn"/>
+   	<target name="scm-migration:cvs2svn">
+    	<techo taskname="scm-migration" message="[start] cvs2svn"/>
+    	<property name="cvs2svn.command.arguments" value="--username=scm-migration --fallback-encoding=utf8 --svnrepos ${scm-migration.work.folder}/svn ${cvs.repository.root}/${repository.name}"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:cvs2svn"/>
     	    <param name="run-command.executable" value="${cvs2svn.tool.path}"/>
     	    <param name="run-command.command.line" value="${cvs2svn.command.arguments}"/>
-    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}"/>
     	</antcall>
-    	<techo taskname="cvs2svn2git" message="[end] cvs2svn"/>
+    	<techo taskname="scm-migration" message="[end] cvs2svn"/>
    	</target> 
    
-   	<target name="cvs2svn2git:svn2git">
-    	<techo taskname="cvs2svn2git" message="[start] svn2git"/>
-    	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=cvs2svn2git/ --no-follow-parent --authors-file=${authors.file.path} file://${cvs2svn2git.work.folder}/svn ${cvs2svn2git.work.folder}/git/${repository.name}"/>
-    	<mkdir dir="${cvs2svn2git.work.folder}/git"/>
-    	<antcall target="cvs2svn2git:run-command">
-    	    <param name="run-command.task-name" value="cvs2svn2git:svn2git"/>
+   	<target name="scm-migration:svn2git">
+    	<techo taskname="scm-migration" message="[start] svn2git"/>
+    	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent --authors-file=${authors.file.path} ${svn.repository.url}"/>
+    	<mkdir dir="${scm-migration.work.folder}/git"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
-    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
     	</antcall>
-    	<techo taskname="cvs2svn2git" message="[end] svn2git"/>
+    	<techo taskname="scm-migration" message="[end] svn2git"/>
+   	</target>
+   	
+   	<!-- GIT push flow targets -->
+   
+   	<target name="scm-migration:git-push-flow">
+   	    <antcall target="scm-migration:git-prepare-for-push"/>
+   	    <antcall target="scm-migration:git-push"/>
    	</target> 
    
-   	<target name="cvs2svn2git:git-prepare-for-push">
-    	<techo taskname="cvs2svn2git" message="[start] git-prepare-for-push"/>
+   	<target name="scm-migration:git-prepare-for-push">
+    	<techo taskname="scm-migration" message="[start] git-prepare-for-push"/>
 
 <script language="javascript"> <![CDATA[
 
@@ -143,15 +158,15 @@ function getTimeStamp() {
 	}
 
       // Access to Ant-Properties by their names
-      dir = project.getProperty("cvs2svn2git.work.folder") + "/git/" + project.getProperty("repository.name");
-      execBranchesList = cvs2svn2git.createTask("exec");
+      dir = project.getProperty("scm-migration.work.folder") + "/git/" + project.getProperty("repository.name");
+      execBranchesList = scmMigration.createTask("exec");
       execBranchesList.setDir(new File(dir));
       execBranchesList.setExecutable("git");
       execBranchesList.createArg().setLine("branch -a");
       execBranchesList.setOutputproperty("branches.list");
       execBranchesList.execute();
       var branchesList = project.getProperty("branches.list");
-      self.setTaskName("cvs2svn2git:svn2git");
+      self.setTaskName("scmMigration:svn2git");
       var branches = branchesList.split("\n");
 	  var numLines = branches.length;
 	  var i;
@@ -163,34 +178,34 @@ function getTimeStamp() {
       for (i = 0; i < numLines; i++) {
          var currentBranch = branches[i].trim();
          
-         if(currentBranch.startsWith("remotes/cvs2svn2git/"))
+         if(currentBranch.startsWith("remotes/scmMigration/"))
          {
-            if(currentBranch.startsWith("remotes/cvs2svn2git/tags"))
+            if(currentBranch.startsWith("remotes/scmMigration/tags"))
          	{
-         		var tagName = currentBranch.substring(25);
-			    execCheckoutTag = cvs2svn2git.createTask("exec");
+         		var tagName = currentBranch.substring(26);
+			    execCheckoutTag = scmMigration.createTask("exec");
 			    execCheckoutTag.setDir(new File(dir));
 			    execCheckoutTag.setExecutable("git");
 			    execCheckoutTag.createArg().setLine("checkout "+currentBranch);
-			    execCheckoutTag.setTaskName("cvs2svn2git:git-checkout");
+			    execCheckoutTag.setTaskName("scm-migration:git-checkout");
 			    execCheckoutTag.execute();
-			    execCreateTag = cvs2svn2git.createTask("exec");
+			    execCreateTag = scmMigration.createTask("exec");
 			    execCreateTag.setDir(new File(dir));
 			    execCreateTag.setExecutable("git");
 			    execCreateTag.createArg().setLine("tag "+tagName);
-			    execCheckoutTag.setTaskName("cvs2svn2git:git-tag");
+			    execCheckoutTag.setTaskName("scm-migration:git-tag");
 			    execCreateTag.execute();
            	}
            	else
            	{
-           		if("remotes/cvs2svn2git/trunk" != currentBranch)
+           		if("remotes/scmMigration/trunk" != currentBranch)
            		{
-         			var branchName = currentBranch.substring(20);
-				    execCheckoutBranch = cvs2svn2git.createTask("exec");
+         			var branchName = currentBranch.substring(21);
+				    execCheckoutBranch = scmMigration.createTask("exec");
 				    execCheckoutBranch.setDir(new File(dir));
 				    execCheckoutBranch.setExecutable("git");
 				    execCheckoutBranch.createArg().setLine("checkout -b "+branchName + " " + currentBranch);
-			   		execCheckoutBranch.setTaskName("cvs2svn2git:git-checkout");
+			   		execCheckoutBranch.setTaskName("scm-migration:git-checkout");
 				    execCheckoutBranch.execute();
            		}
            	}
@@ -200,34 +215,34 @@ function getTimeStamp() {
     ]]>
  </script>
  
-		<techo taskname="cvs2svn2git" message="[end] git-prepare-for-push"/>
+		<techo taskname="scm-migration" message="[end] git-prepare-for-push"/>
    	</target> 
    
-   	<target name="cvs2svn2git:git-push">
-    	<techo taskname="cvs2svn2git" message="[start] git-push"/>
-    	<antcall target="cvs2svn2git:run-command">
-    	    <param name="run-command.task-name" value="cvs2svn2git:set-remote"/>
+   	<target name="scm-migration:git-push">
+    	<techo taskname="scm-migration" message="[start] git-push"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:set-remote"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="remote add origin ${git.remote.uri}"/>
-    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
-    	<antcall target="cvs2svn2git:run-command">
-    	    <param name="run-command.task-name" value="cvs2svn2git:push-branches"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:push-branches"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="push origin --all -v"/>
-    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
-    	<antcall target="cvs2svn2git:run-command">
-    	    <param name="run-command.task-name" value="cvs2svn2git:push-tags"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:push-tags"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="push origin --tags -v"/>
-    	    <param name="run-command.dir" value="${cvs2svn2git.work.folder}/git/${repository.name}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
-    	<techo taskname="cvs2svn2git"  message="[end] git-push"/>
+    	<techo taskname="scm-migration"  message="[end] git-push"/>
    	</target> 
    				
-   	<target name="cvs2svn2git:build-draft-authors-file">
-    	<techo taskname="cvs2svn2git" message="[start] build draft authors file"/>
+   	<target name="scm-migration:build-draft-authors-file">
+    	<techo taskname="scm-migration" message="[start] build draft authors file"/>
 
 <script language="javascript"> <![CDATA[
 
@@ -241,17 +256,17 @@ function getTimeStamp() {
    		return false;
 	}
 
-      echoFileTask = cvs2svn2git.createTask("echo");
+      echoFileTask = scm-migration.createTask("echo");
       authorsFileTemplate = project.getProperty("authors.file.path");
       echoFileTask.setFile(new File(authorsFileTemplate));
-      echoFileTask.setMessage("cvs2svn2git = cvs2svn2git <cvs2svn2git>\n");
+      echoFileTask.setMessage("scm-migration = scm-migration <scm-migration>\n");
       echoFileTask.execute();
       
       echoFileTask.setAppend(true);
       // Access to Ant-Properties by their names
       passwdFile = project.getProperty("cvs.repository.root") + "/" + project.getProperty("repository.name") + "/CVSROOT/passwd";
       
-      loadFileTask = cvs2svn2git.createTask("loadfile");
+      loadFileTask = scm-migration.createTask("loadfile");
       loadFileTask.setSrcFile(new File(passwdFile));
       loadFileTask.setProperty("passwdContent");
       loadFileTask.execute();
@@ -274,7 +289,7 @@ function getTimeStamp() {
     ]]>
  </script>
  
-		<techo taskname="cvs2svn2git" message="[end] build draft authors file"/>
+		<techo taskname="scm-migration" message="[end] build draft authors file"/>
    	</target> 
    
 </project>
