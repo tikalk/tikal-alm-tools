@@ -10,6 +10,7 @@
     <property name="authors.file.path" value="~/info/authors-transform.txt"/>
     <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
     <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
+    <property name="gitignore.file.path" value="${basedir}/../templates/Gitignore/empty.gitignore"/>
  -->
      
     <!-- global definitions -->    
@@ -60,9 +61,17 @@ function getTimeStamp() {
     	    <available file="${cvs.repository.root}"/>
     	</condition>
     	<fail message="CVS repository root doesn't exists (${cvs.repository.root})" unless="cvs.repository.root.exist"/>
-    	<techo taskname="cvs2svn2git" message="[end] validations"/>
+    	<condition property="temp.root.folder.exist">
+    	    <available file="${temp.root.folder}"/>
+    	</condition>
+    	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
+     	<condition property="gitignore.file.path.exist">
+    	    <available file="${gitignore.file.path}"/>
+    	</condition>
+    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/>
+ 		<techo taskname="cvs2svn2git" message="[end] validations"/>
    	</target> 
-   
+
    	<target name="cvs2svn2git:run-command">
     	<techo taskname="cvs2svn2git" message="[start] run command: ${run-command.executable} ${run-command.command.line}"/>
     	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" failonerror="true">
