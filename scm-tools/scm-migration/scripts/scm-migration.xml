@@ -156,10 +156,51 @@ function getTimeStamp() {
    		if( this.indexOf(s) == 0 ) return true;
    		return false;
 	}
-
+	
+	  sourceGitIgnore = new File(project.getProperty("gitignore.file.path"))
+	
       // Access to Ant-Properties by their names
       dir = project.getProperty("scm-migration.work.folder") + "/git/" + project.getProperty("repository.name");
-      execBranchesList = scmMigration.createTask("exec");
+
+	  CVSROOTdir = new File(dir+"/CVSROOT");
+	  if(CVSROOTdir.exists())
+	  {
+      	execRemoveCVSROOT = scmMigration.createTask("delete");
+      	execRemoveCVSROOT.setDir(new File(CVSROOTdir));
+      	execRemoveCVSROOT.execute();
+      	execAddAll = scmMigration.createTask("exec");
+      	execAddAll.setDir(new File(dir));
+      	execAddAll.setExecutable("git");
+      	execAddAll.createArg().setLine("add --all");
+      	execAddAll.execute();
+      	execCommit= scmMigration.createTask("exec");
+      	execCommit.setDir(new File(dir));
+      	execCommit.setExecutable("git");
+      	execCommit.createArg().setLine("commit -m 'Remove CVSROOT'");
+      	execCommit.execute();
+	  }
+	  
+	  gitignorefile = new File(dir+"/.gitignore");
+
+	  if(!gitignorefile.exists())
+	  {
+      	execCopyGitIgnore = scmMigration.createTask("copy");
+      	execCopyGitIgnore.setFile(sourceGitIgnore);
+      	execCopyGitIgnore.setTofile(gitignorefile);
+      	execCopyGitIgnore.execute();
+      	execAddAll = scmMigration.createTask("exec");
+      	execAddAll.setDir(new File(dir));
+      	execAddAll.setExecutable("git");
+      	execAddAll.createArg().setLine("add --all");
+      	execAddAll.execute();
+      	execCommit= scmMigration.createTask("exec");
+      	execCommit.setDir(new File(dir));
+      	execCommit.setExecutable("git");
+      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+      	execCommit.execute();
+	  }
+	  
+	  execBranchesList = scmMigration.createTask("exec");
       execBranchesList.setDir(new File(dir));
       execBranchesList.setExecutable("git");
       execBranchesList.createArg().setLine("branch -a");
@@ -189,10 +230,28 @@ function getTimeStamp() {
 			    execCheckoutTag.createArg().setLine("checkout "+currentBranch);
 			    execCheckoutTag.setTaskName("scm-migration:git-checkout");
 			    execCheckoutTag.execute();
+		 	  	gitignorefile = new File(dir+"/.gitignore");
+			  	if(!gitignorefile.exists())
+			  	{
+			      	execCopyGitIgnore = scmMigration.createTask("copy");
+			      	execCopyGitIgnore.setFile(sourceGitIgnore);
+			      	execCopyGitIgnore.setTofile(gitignorefile);
+			      	execCopyGitIgnore.execute();
+			      	execAddAll = scmMigration.createTask("exec");
+			      	execAddAll.setDir(new File(dir));
+			      	execAddAll.setExecutable("git");
+			      	execAddAll.createArg().setLine("add --all");
+			      	execAddAll.execute();
+			      	execCommit= scmMigration.createTask("exec");
+			      	execCommit.setDir(new File(dir));
+			      	execCommit.setExecutable("git");
+			      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+			      	execCommit.execute();
+			  	}
 			    execCreateTag = scmMigration.createTask("exec");
 			    execCreateTag.setDir(new File(dir));
 			    execCreateTag.setExecutable("git");
-			    execCreateTag.createArg().setLine("tag "+tagName);
+			    execCreateTag.createArg().setLine("tag -f "+tagName);
 			    execCheckoutTag.setTaskName("scm-migration:git-tag");
 			    execCreateTag.execute();
            	}
@@ -201,12 +260,36 @@ function getTimeStamp() {
            		if("remotes/scmMigration/trunk" != currentBranch)
            		{
          			var branchName = currentBranch.substring(21);
+				    execDeleteBranch = scmMigration.createTask("exec");
+				    execDeleteBranch.setDir(new File(dir));
+				    execDeleteBranch.setExecutable("git");
+				    execDeleteBranch.createArg().setLine("branch -D "+branchName);
+				    execDeleteBranch.setTaskName("scm-migration:git-delete-branch");
+				    execDeleteBranch.execute();
 				    execCheckoutBranch = scmMigration.createTask("exec");
 				    execCheckoutBranch.setDir(new File(dir));
 				    execCheckoutBranch.setExecutable("git");
 				    execCheckoutBranch.createArg().setLine("checkout -b "+branchName + " " + currentBranch);
 			   		execCheckoutBranch.setTaskName("scm-migration:git-checkout");
 				    execCheckoutBranch.execute();
+			 	  	gitignorefile = new File(dir+"/.gitignore");
+				  	if(!gitignorefile.exists())
+				  	{
+				      	execCopyGitIgnore = scmMigration.createTask("copy");
+				      	execCopyGitIgnore.setFile(sourceGitIgnore);
+				      	execCopyGitIgnore.setTofile(gitignorefile);
+				      	execCopyGitIgnore.execute();
+				      	execAddAll = scmMigration.createTask("exec");
+				      	execAddAll.setDir(new File(dir));
+				      	execAddAll.setExecutable("git");
+				      	execAddAll.createArg().setLine("add --all");
+				      	execAddAll.execute();
+				      	execCommit= scmMigration.createTask("exec");
+				      	execCommit.setDir(new File(dir));
+				      	execCommit.setExecutable("git");
+				      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+				      	execCommit.execute();
+				  	}
            		}
            	}
          }
