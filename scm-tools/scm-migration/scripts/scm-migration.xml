@@ -1,27 +1,5 @@
 <project name="scmMigration">
 
-    <!-- arguments definitions -->    
-
-<!-- 
-    Those properties should be passed to the script from outside (using -D) for the CVS2GIT migration. Here are example of values:
-    <property name="cvs2svn.tool.folder" value="~/tools/cvs2svn-trunk"/>
-    <property name="cvs.repository.root" value="~/scm/cvs/Repos"/>
-    <property name="repository.name" value="OurProject"/>
-    <property name="authors.file.path" value="~/info/authors-transform.txt"/>
-    <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
-    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
-    <property name="gitignore.file.path" value="${basedir}/../templates/Gitignore/empty.gitignore"/>
- -->
-     
-<!-- 
-    Those properties should be passed to the script from outside (using -D) for the SVN2GIT migration. Here are example of values:
-    <property name="repository.name" value="OurProject"/>
-    <property name="authors.file.path" value="~/info/authors-transform.txt"/>
-    <property name="git.remote.uri" value="git@github.com:tikalk/tikal-alm-tools.git"/>
-    <property name="temp.root.folder" value="/Users/Yoram/Documents/Projects/Earnix/temp"/>
-    <property name="gitignore.file.path" value="${basedir}/../templates/Gitignore/empty.gitignore"/>
- -->
-     
     <!-- global definitions -->    
 
     <property name="cvs2svn.tool.path" value="${cvs2svn.tool.folder}/cvs2svn"/>
@@ -62,24 +40,27 @@ function getTimeStamp() {
 	<!-- CVS2GIT migration targets -->
    
    	<target name="scm-migration:cvs2git:main">
-    	<techo taskname="scm-migration" message="[start] main"/>
+    	<techo taskname="scm-migration" message="[start] CVS2GIT main"/>
    	    <antcall target="scm-migration:cvs2git:validations"/>  
-   	    <antcall target="scm-migration:cvs2git:init"/>  
+   	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:cvs2svn"/>  
     	<antcall target="scm-migration:svn2git">
     	    <param name="svn.repository.url" value="file://${scm-migration.work.folder}/svn ${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>  
     	<antcall target="scm-migration:git-push-flow"/>  
-    	<techo taskname="scm-migration" message="[end] main"/>
+    	<techo taskname="scm-migration" message="[end] CVS2GIT main"/>
    	</target> 
    
    	<target name="scm-migration:cvs2git:validations">
     	<techo taskname="scm-migration"  message="[start] validations"/>
+    	<fail message="cvs2svn tool folder (cvs2svn.tool.folder) wasn't defined" unless="cvs2svn.tool.folder"/>
     	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
     	<fail message="Path to authors file (property name: authors.file.path) wasn't defined" unless="authors.file.path"/>
     	<fail message="Path to CVS root folder (property name: cvs.repository.root) wasn't defined" unless="cvs.repository.root"/>
     	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
-    		
+    	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
+    	<fail message="Source .gitignore file path (gitignore.file.path) wasn't defined" unless="gitignore.file.path"/>
+    			
     	<condition property="cvs2svn.tool.path.exist">
     	    <available file="${cvs2svn.tool.path}"/>
     	</condition>
@@ -96,14 +77,14 @@ function getTimeStamp() {
     	    <available file="${temp.root.folder}"/>
     	</condition>
     	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
-<!--      	<condition property="gitignore.file.path.exist">
+      	<condition property="gitignore.file.path.exist">
     	    <available file="${gitignore.file.path}"/>
     	</condition>
-    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/> -->
+    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/>
  		<techo taskname="scm-migration" message="[end] validations"/>
    	</target> 
 
-   	<target name="scm-migration:cvs2git:init">
+   	<target name="scm-migration:init">
     	<techo taskname="scm-migration" message="[start] init"/>
     	<delete dir="${scm-migration.work.folder}"/>
     	<mkdir dir="${scm-migration.work.folder}"/>
@@ -121,7 +102,43 @@ function getTimeStamp() {
     	</antcall>
     	<techo taskname="scm-migration" message="[end] cvs2svn"/>
    	</target> 
+
+   	<!-- SVN2GIT targets -->
+   	
+   	<target name="scm-migration:svn2git:main">
+    	<techo taskname="scm-migration" message="[start] SVN2GIT main"/>
+   	    <antcall target="scm-migration:svn2git:validations"/>  
+   	    <antcall target="scm-migration:init"/>  
+    	<antcall target="scm-migration:svn2git"/>
+   	    <antcall target="scm-migration:git-push-flow"/>  
+    	<techo taskname="scm-migration" message="[end] SVN2GIT main"/>
+   	</target> 
    
+   	<target name="scm-migration:svn2git:validations">
+    	<techo taskname="scm-migration"  message="[start] validations"/>
+    	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
+    	<fail message="Path to authors file (property name: authors.file.path) wasn't defined" unless="authors.file.path"/>
+    	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
+    	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
+    	<fail message="Source .gitignore file path (gitignore.file.path) wasn't defined" unless="gitignore.file.path"/>
+    	<fail message="SVN repository URL (svn.repository.url) wasn't defined" unless="svn.repository.url"/>
+    		
+    			
+    	<condition property="authors.file.path.exist">
+    	    <available file="${authors.file.path}"/>
+    	</condition>
+    	<fail message="Authors file doesn't exists (${authors.file.path.exist})" unless="authors.file.path.exist"/>
+    	<condition property="temp.root.folder.exist">
+    	    <available file="${temp.root.folder}"/>
+    	</condition>
+    	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
+      	<condition property="gitignore.file.path.exist">
+    	    <available file="${gitignore.file.path}"/>
+    	</condition>
+    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/>
+ 		<techo taskname="scm-migration" message="[end] validations"/>
+   	</target> 
+
    	<target name="scm-migration:svn2git">
     	<techo taskname="scm-migration" message="[start] svn2git"/>
     	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent --authors-file=${authors.file.path} ${svn.repository.url}"/>
