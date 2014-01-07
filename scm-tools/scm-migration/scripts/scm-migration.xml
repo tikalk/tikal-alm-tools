@@ -1,4 +1,4 @@
-<project name="scmMigration">
+<project name="scmMigration" basedir=".">
 
     <!-- global definitions -->    
 
@@ -339,10 +339,23 @@ function getTimeStamp() {
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<techo taskname="scm-migration"  message="[end] git-push"/>
-   	</target> 
+   	</target>
+   	
+   	<!-- Preparation targets -->
    				
-   	<target name="scm-migration:build-draft-authors-file">
-    	<techo taskname="scm-migration" message="[start] build draft authors file"/>
+   	<target name="scm-migration:build-draft-svn-authors-file">
+    	<techo taskname="scm-migration" message="[start] build draft SVN authors file"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2authors"/>
+    	    <param name="run-command.executable" value="${basedir}/svn2authors.sh"/>
+    	    <param name="run-command.command.line" value="${svn.repository.url} ${authors.file.path}"/>
+    	    <param name="run-command.dir" value="${basedir}"/>
+    	</antcall>
+    	<techo taskname="scm-migration" message="[end] build draft SVN authors file"/>
+  	</target>
+    	
+   	<target name="scm-migration:build-draft-cvs-authors-file">
+    	<techo taskname="scm-migration" message="[start] build draft CVS authors file"/>
 
 <script language="javascript"> <![CDATA[
 
@@ -389,7 +402,7 @@ function getTimeStamp() {
     ]]>
  </script>
  
-		<techo taskname="scm-migration" message="[end] build draft authors file"/>
+		<techo taskname="scm-migration" message="[end] build CVS draft authors file"/>
    	</target> 
    
 </project>
