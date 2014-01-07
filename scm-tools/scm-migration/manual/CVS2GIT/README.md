@@ -8,7 +8,7 @@ The migration includes:
 
 * users migration with details (full name and email address)
 * GIT push to a remote repository including all branches and tags
-* Remove of CVSROOT folder in the created repository
+* Removal of CVSROOT folder in the created repository
 * Addition of provided .gitignore file to all branches and tags
 
 For using the cvs2svn2git script, follow those instructions:
@@ -25,5 +25,18 @@ For using the cvs2svn2git script, follow those instructions:
 **CVS2SVN** | The tool uses a well-known CVS-to-SVN migration tool | svn co --username=guest --password="" http://cvs2svn.tigris.org/svn/cvs2svn/trunk cvs2svn-trunk (for more details see [cvs2svn Documentation](http://cvs2svn.tigris.org/cvs2svn.html)) | same as for ubuntu
 **TIKAL-ALM-TOOLS** | This tool should be downloaded to the machine as well using a common git clone command | git clone https://github.com/tikalk/tikal-alm-tools.git | same as for ubuntu
 **Work temporary folder** | create an empty folder where which the tool will use, e.g. mkdir ~/temp |  | 
+**Authors file** | | |
+**Remote GIT repository** | | |
+**Template .gitignore file** | | |
 ## cvs2svn2git script arguments
+**Argument** | **Description** | **Value example**
+------------ | ------------- | ------------
+**repository.name** | The name of the repository as in CVS and will be created in GIT | tikal-alm-tools
+**authors.file.path** | Full path to authors file as described in the prerequisites section | /Users/scmMigration/authors-file.txt
+**cvs.repository.root** | Path to the root of the CVS repository (can be a local copy of it and should not inlcude the specific repository name as set in the repository.name argument) | http://cvsserver/cvsrepo
+**git.remote.uri** | URL of the matching GIT repository as describedin the prerequisites section | https://github.com/tikalk/tikal-alm-tools.git
+**cvs2svn.tool.folder** | Path to the root folder of the downloaded cvs2svn tool as describedin the prerequisites section | /Users/scmMigration/cvs2svn-trunk
+**temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
+**gitignore.file.path** | Path to .gitignore template file that will be injected to the root of all branches and tags (can be an empty file) | /Users/scmMigration/java.gitignore
+
 ## cvs2svn2git script activation
