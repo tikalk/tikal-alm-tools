@@ -1,0 +1,2 @@
+scm-migration = scm-migration <scm-migration>
+bill.gates = Bill Gates <bill.gates.microsoft.com>
