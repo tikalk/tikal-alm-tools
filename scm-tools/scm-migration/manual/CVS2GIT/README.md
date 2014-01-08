@@ -11,7 +11,7 @@ The migration includes:
 * Removal of CVSROOT folder in the created repository
 * Addition of provided .gitignore file to all branches and tags
 
-For using the cvs2svn2git script, follow those instructions:
+For using the CVS2GIT script, follow those instructions:
 
 ## CVS-to-GIT script prerequisites
 
