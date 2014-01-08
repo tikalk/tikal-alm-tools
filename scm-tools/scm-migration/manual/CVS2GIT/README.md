@@ -33,7 +33,7 @@ For using the cvs2svn2git script, follow those instructions:
 ------------ | ------------- | ------------
 **repository.name** | The name of the repository as in CVS and will be created in GIT | tikal-alm-tools
 **authors.file.path** | Full path to authors file as described in the prerequisites section | /Users/scmMigration/authors-file.txt
-**cvs.repository.root** | Path to the root of the CVS repositorr/>y (can be a local copy of it and should not inlcude the specific repository name as set in the repository.name argument) | http://cvsserver/cvsrepo
+**cvs.repository.root** | Path to the root of the CVS repository (can be a local copy of it and should not inlcude the specific repository name as set in the repository.name argument) | http://cvsserver/cvsrepo
 **git.remote.uri** | URL of the matching GIT repository as describedin the prerequisites section | https://github.com/tikalk/tikal-alm-tools.git
 **cvs2svn.tool.folder** | Path to the root folder of the downloaded cvs2svn tool as describedin the prerequisites section | /Users/scmMigration/cvs2svn-trunk
 **temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
