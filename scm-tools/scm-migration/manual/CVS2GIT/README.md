@@ -13,7 +13,7 @@ The migration includes:
 
 For using the CVS2GIT script, follow those instructions:
 
-## CVS-to-GIT script prerequisites
+## CVS2GIT script prerequisites
 
 **Tool** | **Description** | **Installation**
 ------------ | ------------- | ------------
@@ -28,7 +28,7 @@ For using the CVS2GIT script, follow those instructions:
 **Authors file** | A text file containing all CVS users (in addition to scm-migration user), in the following format:<br/>*user* = *full name* <*email address*> - one line per user.<br/>Example:*<br/>scm-migration = scm-migration <scm-migration><br/>bill.gates = Bill Gates <bill.gates.microsoft.com>*.<br/>Note: you must include a line for all CVS users (even if not relevant anymore) otherwise the migration will fail | See: [Automatic creation of CVS authors file](https://github.com/tikalk/tikal-alm-tools/tree/master/scm-tools/scm-migration/manual/CVS2AUTHORS) 
 **Remote GIT repository** | Depending on the GIT repository manager you're using (e.g. GitHub, GitLab, etc.) you should create an empty new repository (best to be named as the 'repository name' argument above)
 **Template .gitignore file** | Depending on the code main language and/or environment you're using, you should create a .gitignore template file.<br/>There are template files located in [/tikal-alm-tools/scm-tools/scm-migration/templates/GitIgnore](https://github.com/tikalk/tikal-alm-tools/tree/master/scm-tools/scm-migration/templates/GitIgnore) that you can use| see: [gitignore(5) Manual Page](http://git-scm.com/docs/gitignore) for .gitignore format |
-## CVS-to-GIT script arguments
+## CVS2GIT script arguments
 **Argument** | **Description** | **Value example**
 ------------ | ------------- | ------------
 **repository.name** | The name of the repository as in CVS and will be created in GIT | tikal-alm-tools
@@ -39,7 +39,7 @@ For using the CVS2GIT script, follow those instructions:
 **temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
 **gitignore.file.path** | Path to .gitignore template file that will be injected to the root of all branches and tags (can be an empty file) | /Users/scmMigration/java.gitignore
 
-## CVS-to-GIT script activation
+## CVS2GIT script activation
 Once you're ready will all prerequisites and script arguments, you can activate the CVS2GIT script by running the [/tikal-alm-tools/scm-tools/scm-migration/scripts/scm-migration.xml](https://github.com/tikalk/tikal-alm-tools/blob/master/scm-tools/scm-migration/scripts/scm-migration.xml) ANT script in one of those methods:
 
 1. **ant -file scm-migration.xml <*list of arguments*> scm-migration:cvs2git:main**<br/>Where <*list of arguments*> is a list of **ALL** the above arguments with there values including leading -D prefix for each argument.<br/>Example:<br/>*ant -file scm-migration -Drepository.name=tikal-alm-tools ... -Dgitignore.file.path=/Users/scmMigration/java.gitignore scm-migration:cvs2git:main*
