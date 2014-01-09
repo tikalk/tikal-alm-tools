@@ -8,5 +8,5 @@ The SCM migration tool includes the following features:
 In Addition it inlcudes 2 supporting features:
 
 * [**CVS2AUTHORS**](https://github.com/tikalk/tikal-alm-tools/tree/master/scm-tools/scm-migration/manual/CVS2AUTHORS) - prepate a template authors list file based on CVS users list
-* [**SVN2AUTHORS**](https://github.com/tikalk/tikal-alm-tools/tree/master/scm-tools/scm-migration/manual/SVN2GIT) - prepate a template authors list file based on SVN users list
+* [**SVN2AUTHORS**](https://github.com/tikalk/tikal-alm-tools/tree/master/scm-tools/scm-migration/manual/SVN2AUTHORS) - prepate a template authors list file based on SVN users list
 
