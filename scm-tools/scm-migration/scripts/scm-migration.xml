@@ -188,8 +188,8 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command-and-output-to-file">
     	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
     	    <param name="run-command.executable" value="git"/>
-    	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
-    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
+    	    <param name="run-command.command.line" value="svn show-ignore -i scmMigration/trunk"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	    <param name="run-command.dir.output.file" value="${gitignore.file.path}"/>
     	</antcall>
    	    <techo taskname="scm-migration" message="[end] generate .gitignore file"/>
