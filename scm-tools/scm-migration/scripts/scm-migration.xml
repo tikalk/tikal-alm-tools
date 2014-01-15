@@ -39,7 +39,17 @@ function getTimeStamp() {
 	        <isset property="svn2git.additional.arguments"/>
 	    </not>
 	</condition>
-	
+	<condition property="gitignore.file.path" value="${temp.root.folder}/template.gitignore">
+	    <not>
+	        <isset property="gitignore.file.path"/>
+	    </not>
+	</condition>
+	<condition property="gitignore.generate" value="true">
+	    <not>
+	        <isset property="gitignore.file.path"/>
+	    </not>
+	</condition>
+			
 	<!-- general targets -->    
     
    	<target name="scm-migration:general:run-command">
@@ -50,7 +60,15 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[end] run command"/>
    	</target> 
    	
-	<!-- CVS2GIT migration targets -->
+   	<target name="scm-migration:general:run-command-and-output-to-file">
+    	<techo taskname="scm-migration" message="[start] run command and output to file (${run-command.dir.output.file}): ${run-command.executable} ${run-command.command.line}"/>
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" failonerror="true">
+    	    <arg line="${run-command.command.line}"/>
+    	</exec>
+    	<techo taskname="scm-migration" message="[end] run command"/>
+   	</target> 
+   	
+  	<!-- CVS2GIT migration targets -->
    
    	<target name="scm-migration:cvs2git:main">
     	<techo taskname="scm-migration" message="[start] CVS2GIT main"/>
@@ -123,6 +141,7 @@ function getTimeStamp() {
    	    <antcall target="scm-migration:svn2git:validations"/>  
    	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:svn2git"/>
+    	<antcall target="scm-migration:svn2git:gitignore-file-generation"/>
    	    <antcall target="scm-migration:git-push-flow"/>  
     	<techo taskname="scm-migration" message="[end] SVN2GIT main"/>
    	</target> 
@@ -133,7 +152,6 @@ function getTimeStamp() {
     	<fail message="Path to authors file (property name: authors.file.path) wasn't defined" unless="authors.file.path"/>
     	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
     	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
-    	<fail message="Source .gitignore file path (gitignore.file.path) wasn't defined" unless="gitignore.file.path"/>
     	<fail message="SVN repository URL (svn.repository.url) wasn't defined" unless="svn.repository.url"/>
     		
     			
@@ -165,6 +183,18 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[end] svn2git"/>
    	</target>
    	
+   	<target name="scm-migration:svn2git:gitignore-file-generation" if="gitignore.generate">
+    	<techo taskname="scm-migration" message="[start] generate .gitignore file"/>
+    	<antcall target="scm-migration:general:run-command-and-output-to-file">
+    	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
+    	    <param name="run-command.dir.output.file" value="${gitignore.file.path}"/>
+    	</antcall>
+   	    <techo taskname="scm-migration" message="[end] generate .gitignore file"/>
+   	</target> 
+   
    	<!-- GIT push flow targets -->
    
    	<target name="scm-migration:git-push-flow">
