@@ -27,7 +27,20 @@ function getTimeStamp() {
 ]]>
 </scriptdef>
     
- 	<!-- general targets -->    
+	<!-- conditional properties -->
+	
+	<condition property="cvs2svn.additional.arguments" value="">
+	    <not>
+	        <isset property="cvs2svn.additional.arguments"/>
+	    </not>
+	</condition>
+	<condition property="svn2git.additional.arguments" value="">
+	    <not>
+	        <isset property="svn2git.additional.arguments"/>
+	    </not>
+	</condition>
+	
+	<!-- general targets -->    
     
    	<target name="scm-migration:general:run-command">
     	<techo taskname="scm-migration" message="[start] run command: ${run-command.executable} ${run-command.command.line}"/>
@@ -93,7 +106,7 @@ function getTimeStamp() {
    
    	<target name="scm-migration:cvs2svn">
     	<techo taskname="scm-migration" message="[start] cvs2svn"/>
-    	<property name="cvs2svn.command.arguments" value="--username=scm-migration --fallback-encoding=utf8 --svnrepos ${scm-migration.work.folder}/svn ${cvs.repository.root}/${repository.name}"/>
+    	<property name="cvs2svn.command.arguments" value="--username=scm-migration --fallback-encoding=utf8 ${cvs2svn.additional.arguments} --svnrepos ${scm-migration.work.folder}/svn ${cvs.repository.root}/${repository.name}"/>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:cvs2svn"/>
     	    <param name="run-command.executable" value="${cvs2svn.tool.path}"/>
@@ -141,7 +154,7 @@ function getTimeStamp() {
 
    	<target name="scm-migration:svn2git">
     	<techo taskname="scm-migration" message="[start] svn2git"/>
-    	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent --authors-file=${authors.file.path} ${svn.repository.url}"/>
+    	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent ${svn2git.additional.arguments} --authors-file=${authors.file.path} ${svn.repository.url}"/>
     	<mkdir dir="${scm-migration.work.folder}/git"/>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
