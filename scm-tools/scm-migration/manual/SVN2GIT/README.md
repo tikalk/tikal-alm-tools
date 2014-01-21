@@ -34,7 +34,7 @@ For using the SVN2GIT script, follow those instructions:
 **temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
 **gitignore.file.path** | Path to .gitignore template file that will be injected to the root of all branches and tags (can be an empty file) | /Users/scmMigration/java.gitignore
 **svn.repository.url** | SVN repository URL | http://scmserver/svnrepo/tikal-alm-tools
-**svn2git.additional.arguments** | additional git-svn tool arguments as described in [https://www.kernel.org/pub/software/scm/git/docs/git-svn.html] | --tags=tags/release --tags=tags/snapshots --branches=branches/bug-fixes --branches=branches/releasecandidates --ignore-paths=CVSROOT
+**svn2git.additional.arguments** | additional git-svn tool arguments as described in [https://www.kernel.org/pub/software/scm/git/docs/git-svn.html] | --tags=tags/release<br/>--tags=tags/snapshots<br/>--branches=branches/bug-fixes<br/>--branches=branches/RC<br/>--ignore-paths=CVSROOT
 ## SVN2GIT script activation
 Once you're ready will all prerequisites and script arguments, you can activate the SVN2GIT script by running the [/tikal-alm-tools/scm-tools/scm-migration/scripts/scm-migration.xml](https://github.com/tikalk/tikal-alm-tools/blob/master/scm-tools/scm-migration/scripts/scm-migration.xml) ANT script in one of those methods:
 
