@@ -30,7 +30,7 @@ For using the SVN2GIT script, follow those instructions:
 ------------ | ------------- | ------------
 **repository.name** | The name of the repository as in SVN and will be created in GIT | tikal-alm-tools
 **authors.file.path** | Full path to authors file as described in the prerequisites section | /Users/scmMigration/authors-file.txt
-**git.remote.uri** | URL of the matching GIT repository as describedin the prerequisites section | https://github.com/tikalk/tikal-alm-tools.git
+**git.remote.uri** | URL of the matching GIT repository as describedin the prerequisites section. Leave this arugment as an empty text if you want to skip the 'git push' step at the end of the process. | https://github.com/tikalk/tikal-alm-tools.git
 **temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
 **gitignore.file.path** | Path to .gitignore template file that will be injected to the root of all branches and tags (can be an empty file) | /Users/scmMigration/java.gitignore
 **svn.repository.url** | SVN repository URL | http://scmserver/svnrepo/tikal-alm-tools

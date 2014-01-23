@@ -49,7 +49,12 @@ function getTimeStamp() {
 	        <isset property="gitignore.file.path"/>
 	    </not>
 	</condition>
-			
+	<condition property="push.to.remote" value="true">
+	    <not>
+	        <equals arg1="${git.remote.uri}" arg2=""/>
+	    </not>
+	</condition>
+				
 	<!-- general targets -->    
     
    	<target name="scm-migration:general:run-command">
@@ -361,7 +366,7 @@ function getTimeStamp() {
 		<techo taskname="scm-migration" message="[end] git-prepare-for-push"/>
    	</target> 
    
-   	<target name="scm-migration:git-push">
+   	<target name="scm-migration:git-push" if="push.to.remote">
     	<techo taskname="scm-migration" message="[start] git-push"/>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:set-remote"/>
