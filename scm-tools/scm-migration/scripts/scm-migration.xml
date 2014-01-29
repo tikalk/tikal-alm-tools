@@ -39,12 +39,12 @@ function getTimeStamp() {
 	        <isset property="svn2git.additional.arguments"/>
 	    </not>
 	</condition>
-	<condition property="gitignore.file.path" value="${temp.root.folder}/template.gitignore">
+	<condition property="gitignore.generate" value="true">
 	    <not>
 	        <isset property="gitignore.file.path"/>
 	    </not>
 	</condition>
-	<condition property="gitignore.generate" value="true">
+	<condition property="gitignore.file.path" value="${temp.root.folder}/template.gitignore">
 	    <not>
 	        <isset property="gitignore.file.path"/>
 	    </not>
@@ -168,10 +168,6 @@ function getTimeStamp() {
     	    <available file="${temp.root.folder}"/>
     	</condition>
     	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
-      	<condition property="gitignore.file.path.exist">
-    	    <available file="${gitignore.file.path}"/>
-    	</condition>
-    	<fail message="Template .gitignore file doesn't  exists (${gitignore.file.path})" unless="gitignore.file.path.exist"/>
  		<techo taskname="scm-migration" message="[end] validations"/>
    	</target> 
 
