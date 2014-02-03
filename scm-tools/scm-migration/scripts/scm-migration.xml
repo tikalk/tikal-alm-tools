@@ -237,7 +237,7 @@ function getTimeStamp() {
       	execCommit= scmMigration.createTask("exec");
       	execCommit.setDir(new File(dir));
       	execCommit.setExecutable("git");
-      	execCommit.createArg().setLine("commit -m 'Remove CVSROOT'");
+      	execCommit.createArg().setLine("commit -m '[scm-migration] Remove CVSROOT'");
       	execCommit.execute();
 	  }
 	  
@@ -257,7 +257,7 @@ function getTimeStamp() {
       	execCommit= scmMigration.createTask("exec");
       	execCommit.setDir(new File(dir));
       	execCommit.setExecutable("git");
-      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+      	execCommit.createArg().setLine("commit -m '[scm-migration] Add .gitgnore file'");
       	execCommit.execute();
 	  }
 	  
@@ -306,7 +306,7 @@ function getTimeStamp() {
 			      	execCommit= scmMigration.createTask("exec");
 			      	execCommit.setDir(new File(dir));
 			      	execCommit.setExecutable("git");
-			      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+			      	execCommit.createArg().setLine("commit -m '[scm-migration] ["+tagName+"] Add .gitgnore file'");
 			      	execCommit.execute();
 			  	}
 			    execCreateTag = scmMigration.createTask("exec");
@@ -348,7 +348,7 @@ function getTimeStamp() {
 				      	execCommit= scmMigration.createTask("exec");
 				      	execCommit.setDir(new File(dir));
 				      	execCommit.setExecutable("git");
-				      	execCommit.createArg().setLine("commit -m 'Add .gitgnore file'");
+				      	execCommit.createArg().setLine("commit -m '[scm-migration] ["+branchName+"] Add .gitgnore file'");
 				      	execCommit.execute();
 				  	}
            		}
