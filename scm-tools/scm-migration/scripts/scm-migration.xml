@@ -125,7 +125,7 @@ function getTimeStamp() {
     	<delete dir="${scm-migration.work.folder}"/>
     	<mkdir dir="${scm-migration.work.folder}"/>
     	<techo taskname="scm-migration" message="[end] init"/>
-   	    <record name="${temp.root.folder}/scm-migration.log" action="start"/>
+   	    <record name="${temp.root.folder}/${repository.name}/scm-migration.log" action="start" loglevel="info"/>
   	</target> 
    
    	<target name="scm-migration:cvs2svn">
