@@ -136,7 +136,6 @@ function getTimeStamp() {
     	<delete dir="${scm-migration.work.folder}"/>
     	<mkdir dir="${scm-migration.work.folder}"/>
     	<techo taskname="scm-migration" message="[end] init"/>
-   	    <record name="${temp.root.folder}/${repository.name}/scm-migration.log" action="start" append="yes" loglevel="info"/>
   	</target> 
    
    	<target name="scm-migration:cvs2svn">
@@ -187,13 +186,11 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[start] svn2git"/>
     	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent ${svn2git.additional.arguments} --authors-file=${authors.file.path} ${svn.repository.url}"/>
     	<mkdir dir="${scm-migration.work.folder}/git"/>
-    	<antcall target="scm-migration:general:run-command-and-output-to-file">
+    	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
-    	    <param name="run-command.dir.output.file" value="${scm-migration.work.folder}/${repository.name}-svn2git.out"/>
-    	    <param name="run-command.dir.error.file" value="${scm-migration.work.folder}/${repository.name}-svn2git.err"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] svn2git"/>
    	</target>
