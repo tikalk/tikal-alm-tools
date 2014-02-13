@@ -65,11 +65,19 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[end] run command"/>
    	</target> 
    	
+   	<target name="scm-migration:general:run-command-and-output-to-file-output" if="exec.failed">
+   	    <loadfile srcfile="${output.file}" property="output.file.content"/>
+   	    <fail message="${output.file.content}"/>
+   	</target> 
+   	
    	<target name="scm-migration:general:run-command-and-output-to-file">
     	<techo taskname="scm-migration" message="[start] run command and output to file (${run-command.dir.output.file}): ${run-command.executable} ${run-command.command.line}"/>
-    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" failonerror="true">
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" resultproperty="exec.failed">
     	    <arg line="${run-command.command.line}"/>
     	</exec>
+    	<antcall target="scm-migration:general:run-command-and-output-to-file-output"/>
+    		<param name="output.file" value="${run-command.dir.output.file}"/>
+    	</antcall>
     	<techo taskname="scm-migration" message="[end] run command"/>
    	</target> 
    	
@@ -176,11 +184,12 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[start] svn2git"/>
     	<property name="svn2git.command.arguments" value="svn clone -s -q --no-metadata --prefix=scmMigration/ --no-follow-parent ${svn2git.additional.arguments} --authors-file=${authors.file.path} ${svn.repository.url}"/>
     	<mkdir dir="${scm-migration.work.folder}/git"/>
-    	<antcall target="scm-migration:general:run-command">
+    	<antcall target="scm-migration:general:run-command-and-output-to-file">
     	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
+    	    <param name="run-command.dir.output.file" value="${scm-migration.work.folder}/${svn.repository.url}-svn2git.out"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] svn2git"/>
    	</target>
