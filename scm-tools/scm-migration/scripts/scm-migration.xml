@@ -189,7 +189,7 @@ function getTimeStamp() {
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
-    	    <param name="run-command.dir.output.file" value="${scm-migration.work.folder}/${svn.repository.url}-svn2git.out"/>
+    	    <param name="run-command.dir.output.file" value="${scm-migration.work.folder}/${repository.name}-svn2git.out"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] svn2git"/>
    	</target>
