@@ -67,16 +67,19 @@ function getTimeStamp() {
    	
    	<target name="scm-migration:general:run-command-and-output-to-file-output" if="exec.failed">
    	    <loadfile srcfile="${output.file}" property="output.file.content"/>
-   	    <fail message="${output.file.content}"/>
+   	    <loadfile srcfile="${error.file}" property="error.file.content"/>
+   	    <echo message="${output.file.content}"/>
+   	    <fail message="${error.file.content}"/>
    	</target> 
    	
    	<target name="scm-migration:general:run-command-and-output-to-file">
     	<techo taskname="scm-migration" message="[start] run command and output to file (${run-command.dir.output.file}): ${run-command.executable} ${run-command.command.line}"/>
-    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" resultproperty="exec.failed">
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" error="${run-command.dir.error.file}" resultproperty="exec.failed">
     	    <arg line="${run-command.command.line}"/>
     	</exec>
     	<antcall target="scm-migration:general:run-command-and-output-to-file-output">
     		<param name="output.file" value="${run-command.dir.output.file}"/>
+    		<param name="error.file" value="${run-command.dir.error.file}"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] run command"/>
    	</target> 
@@ -190,6 +193,7 @@ function getTimeStamp() {
     	    <param name="run-command.command.line" value="${svn2git.command.arguments}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
     	    <param name="run-command.dir.output.file" value="${scm-migration.work.folder}/${repository.name}-svn2git.out"/>
+    	    <param name="run-command.dir.error.file" value="${scm-migration.work.folder}/${repository.name}-svn2git.err"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] svn2git"/>
    	</target>
@@ -202,6 +206,7 @@ function getTimeStamp() {
     	    <param name="run-command.command.line" value="svn show-ignore -i scmMigration/trunk"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	    <param name="run-command.dir.output.file" value="${gitignore.file.path}"/>
+    	    <param name="run-command.dir.error.file" value="${gitignore.file.path}.err"/>
     	</antcall>
    	    <techo taskname="scm-migration" message="[end] generate .gitignore file"/>
    	</target> 
