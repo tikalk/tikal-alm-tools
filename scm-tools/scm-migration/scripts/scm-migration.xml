@@ -74,9 +74,14 @@ function getTimeStamp() {
    	
    	<target name="scm-migration:general:run-command-and-output-to-file">
     	<techo taskname="scm-migration" message="[start] run command and output to file (${run-command.dir.output.file}): ${run-command.executable} ${run-command.command.line}"/>
-    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" error="${run-command.dir.error.file}" resultproperty="exec.failed">
+    	<exec taskname="${run-command.task-name}" executable="${run-command.executable}" dir="${run-command.dir}" output="${run-command.dir.output.file}" error="${run-command.dir.error.file}" resultproperty="exec.result">
     	    <arg line="${run-command.command.line}"/>
     	</exec>
+    	<condition property="exec.failed">
+    	    <not>
+    	        <equals arg1="${exec.result}" arg2="0"/>
+    	    </not>
+    	</condition>
     	<antcall target="scm-migration:general:run-command-and-output-to-file-output">
     		<param name="output.file" value="${run-command.dir.output.file}"/>
     		<param name="error.file" value="${run-command.dir.error.file}"/>
