@@ -98,7 +98,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:cvs2svn"/>  
     	<antcall target="scm-migration:svn2git">
     	    <param name="svn.repository.url" value="file://${scm-migration.work.folder}/svn ${scm-migration.work.folder}/git/${repository.name}"/>
-    	</antcall>  
+    	</antcall>
     	<antcall target="scm-migration:git-push-flow"/>  
     	<techo taskname="scm-migration" message="[end] CVS2GIT main"/>
    	</target> 
@@ -217,6 +217,7 @@ function getTimeStamp() {
    
    	<target name="scm-migration:git-push-flow">
    	    <antcall target="scm-migration:git-prepare-for-push"/>
+    	<antcall target="scm-migration:aggressive-gc"/>  
    	    <antcall target="scm-migration:git-push"/>
    	</target> 
    
@@ -400,6 +401,17 @@ function getTimeStamp() {
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<techo taskname="scm-migration"  message="[end] git-push"/>
+   	</target> 
+   
+   	<target name="scm-migration:aggressive-gc">
+    	<techo taskname="scm-migration"  message="[start] aggressive git gc"/>
+   	   	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:aggressive-gc"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="gc --aggressive"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<techo taskname="scm-migration"  message="[end] aggressive git gc"/>
    	</target>
    	
    	<!-- Preparation targets -->
