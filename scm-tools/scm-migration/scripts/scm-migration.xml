@@ -260,7 +260,7 @@ function getTimeStamp() {
       importClass(java.io.File);
           	      
       var branchesList = project.getProperty("branches.list");
-      self.setTaskName("scmMigration:svn2git");
+      self.setTaskName("scmMigration:svn2baregit:migrate-branch");
       var branches = branchesList.split("\n");
 	  var numLines = branches.length;
 	  var i;
@@ -271,7 +271,7 @@ function getTimeStamp() {
       // parse phrases
       for (i = 0; i < numLines; i++) {
          var currentBranch = branches[i].trim();
-	      echoBranch = scm-migration.createTask("echo");
+	      echoBranch = scmMigration.createTask("echo");
 	      echoBranch.setMessage("current branch: "+currentBranch+"\n");
 	      echoBranch.execute();
 	  }
@@ -605,7 +605,7 @@ function getTimeStamp() {
    		return false;
 	}
 
-      echoFileTask = scm-migration.createTask("echo");
+      echoFileTask = scmMigration.createTask("echo");
       authorsFileTemplate = project.getProperty("authors.file.path");
       echoFileTask.setFile(new File(authorsFileTemplate));
       echoFileTask.setMessage("scm-migration = scm-migration <scm-migration>\n");
@@ -615,7 +615,7 @@ function getTimeStamp() {
       // Access to Ant-Properties by their names
       passwdFile = project.getProperty("cvs.repository.root") + "/" + project.getProperty("repository.name") + "/CVSROOT/passwd";
       
-      loadFileTask = scm-migration.createTask("loadfile");
+      loadFileTask = scmMigration.createTask("loadfile");
       loadFileTask.setSrcFile(new File(passwdFile));
       loadFileTask.setProperty("passwdContent");
       loadFileTask.execute();
