@@ -224,8 +224,7 @@ function getTimeStamp() {
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
-    	    <param name="run-command.executable" value="find"/>
-    	    <param name="run-command.command.line" value=". -type d -empty -exec touch {}/.gitignore \;"/>
+    	    <param name="run-command.executable" value="${basedir}/fillEmptyFolders.sh"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
