@@ -163,8 +163,8 @@ function getTimeStamp() {
    	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:svn2baregit:init"/>
     	<antcall target="scm-migration:svn2baregit:svn-trunk2git-master"/>
-<!--     	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
-    	<antcall target="scm-migration:svn2baregit:migrate-tags"/>  -->
+     	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
+<!--     	<antcall target="scm-migration:svn2baregit:migrate-tags"/>  -->
     	<techo taskname="scm-migration" message="[end] SVN2BAREGIT main"/>
    	</target> 
    
@@ -249,6 +249,40 @@ function getTimeStamp() {
    		<techo taskname="scm-migration"  message="[end] svn-trunk2git-master"/>
    	</target> 
 
+   	<target name="scm-migration:svn2baregit:migrate-branches">
+    	<techo taskname="scm-migration"  message="[start] migrate branches"/>
+    	<loadfile file="${branches.list.file}" property="branches.list"/>
+    	
+  <script language="javascript"> <![CDATA[
+
+      // import statements
+      // importPackage(java.io);
+      importClass(java.io.File);
+          	      
+      var branchesList = project.getProperty("branches.list");
+      self.setTaskName("scmMigration:svn2git");
+      var branches = branchesList.split("\n");
+	  var numLines = branches.length;
+	  var i;
+      var currentSection;
+      var sections = Array();
+      var phrases = Array();
+
+      // parse phrases
+      for (i = 0; i < numLines; i++) {
+         var currentBranch = branches[i].trim();
+	      echoBranch = scm-migration.createTask("echo");
+	      echoBranch.setMessage("current branch: "+currentBranch+"\n");
+	      echoBranch.execute();
+	  }
+    ]]>
+ </script>
+ 
+         
+    	
+    	<techo taskname="scm-migration"  message="[end] migrate branches"/>
+   	</target> 
+
    	<target name="scm-migration:svn2baregit:migrate-branch">
     	<techo taskname="scm-migration"  message="[start] migrate branch ${current.branch}"/>
     	<antcall target="scm-migration:general:run-command">
@@ -260,7 +294,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
-    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/branches/${current.branch} ."/>
+    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/${branches.path}/${current.branch} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
