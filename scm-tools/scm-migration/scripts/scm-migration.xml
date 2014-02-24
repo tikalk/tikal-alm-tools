@@ -155,6 +155,94 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[end] cvs2svn"/>
    	</target> 
 
+   	<!-- SVN2BAREGIT targets -->
+   	
+   	<target name="scm-migration:svn2baregit:main">
+    	<techo taskname="scm-migration" message="[start] SVN2BAREGIT main"/>
+   	    <antcall target="scm-migration:svn2baregit:validations"/>  
+   	    <antcall target="scm-migration:init"/>  
+    	<antcall target="scm-migration:svn2baregit:init"/>
+    	<antcall target="scm-migration:svn2baregit:migrate-master"/>
+    	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
+    	<antcall target="scm-migration:svn2baregit:migrate-tags"/>
+    	<techo taskname="scm-migration" message="[end] SVN2BAREGIT main"/>
+   	</target> 
+   
+   	<target name="scm-migration:svn2baregit:validations">
+    	<techo taskname="scm-migration"  message="[start] validations"/>
+    	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
+    	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
+    	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
+    	<fail message="SVN repository URL (svn.repository.url) wasn't defined" unless="svn.repository.url"/>
+    	<condition property="temp.root.folder.exist">
+    	    <available file="${temp.root.folder}"/>
+    	</condition>
+    	<fail message="Temporary working folder doesn't exists (${temp.root.folder})" unless="temp.root.folder.exist"/>
+ 		<techo taskname="scm-migration" message="[end] validations"/>
+   	</target> 
+   
+   	<target name="scm-migration:svn2baregit:init">
+    	<techo taskname="scm-migration"  message="[start] svn2baregit init"/>
+  		<delete dir="${scm-migration.work.folder}/git/${repository.name}"/>
+  		<mkdir dir="${scm-migration.work.folder}/git/${repository.name}"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:git-init"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="init"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}" file="${gitignore.file.path}"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-gitignore"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="add --all"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-gitignore"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="commit -a -m &quot;ScmMigration - add .gitignore&quot;"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:craete-template-branch"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="checkout -b templateScmMigration"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:checkout-master"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="checkout master"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
+    	    <param name="run-command.executable" value="svn"/>
+    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/trunk"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
+    	    <param name="run-command.executable" value="find"/>
+    	    <param name="run-command.command.line" value=". -type d -empty -exec touch {}/.gitignore \;"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-all-files"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="add --all"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="commit -a -m &quot;ScmMigration - master commit&quot;"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+   		<techo taskname="scm-migration"  message="[end] svn2baregit init"/>
+   	</target> 
+
    	<!-- SVN2GIT targets -->
    	
    	<target name="scm-migration:svn2git:main">
@@ -174,7 +262,6 @@ function getTimeStamp() {
     	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
     	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
     	<fail message="SVN repository URL (svn.repository.url) wasn't defined" unless="svn.repository.url"/>
-    		
     			
     	<condition property="authors.file.path.exist">
     	    <available file="${authors.file.path}"/>
