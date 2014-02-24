@@ -251,7 +251,7 @@ function getTimeStamp() {
 
    	<target name="scm-migration:svn2baregit:migrate-branches">
     	<techo taskname="scm-migration"  message="[start] migrate branches"/>
-    	<loadfile file="${branches.list.file}" property="branches.list"/>
+    	<loadfile srcfile="${branches.list.file}" property="branches.list"/>
     	
   <script language="javascript"> <![CDATA[
 
