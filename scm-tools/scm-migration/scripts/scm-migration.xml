@@ -252,6 +252,7 @@ function getTimeStamp() {
    	<target name="scm-migration:svn2baregit:migrate-branches">
     	<techo taskname="scm-migration"  message="[start] migrate branches"/>
     	<loadfile srcfile="${branches.list.file}" property="branches.list"/>
+    	<property name="branches.path" value="branches"/>
     	
   <script language="javascript"> <![CDATA[
 
@@ -271,9 +272,12 @@ function getTimeStamp() {
       // parse phrases
       for (i = 0; i < numLines; i++) {
          var currentBranch = branches[i].trim();
-	      echoBranch = scmMigration.createTask("echo");
-	      echoBranch.setMessage("current branch: "+currentBranch+"\n");
-	      echoBranch.execute();
+	      var antCall = project.createTask("antcall");
+	      antCall.setTarget("scm-migration:svn2baregit:migrate-branch"); 
+	      var branchParam = antCall.createParam(); 
+	      branchParam.setName("current.branch"); 
+	      branchParam.setValue(currentBranch); 
+	      antCall.perform();
 	  }
     ]]>
  </script>
