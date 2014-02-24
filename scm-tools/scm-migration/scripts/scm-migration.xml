@@ -224,7 +224,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
-    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/trunk ."/>
+    	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/trunk ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
@@ -243,7 +243,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
     	    <param name="run-command.executable" value="git"/>
-    	    <param name="run-command.command.line" value="commit -a -m &quot;ScmMigration - master commit&quot;"/>
+    	    <param name="run-command.command.line" value="commit -q -a -m &quot;ScmMigration - master commit&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
    		<techo taskname="scm-migration"  message="[end] svn-trunk2git-master"/>
@@ -294,7 +294,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
-    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/${branches.path}/${current.branch} ."/>
+    	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${branches.path}/${current.branch} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
@@ -313,7 +313,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
     	    <param name="run-command.executable" value="git"/>
-    	    <param name="run-command.command.line" value="commit -a -m &quot;ScmMigration - ${current.branch} commit&quot;"/>
+    	    <param name="run-command.command.line" value="commit -q -a -m &quot;ScmMigration - ${current.branch} commit&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<techo taskname="scm-migration"  message="[end] migrate branch ${current.branch}"/>
