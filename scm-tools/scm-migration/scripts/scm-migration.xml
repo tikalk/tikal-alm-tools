@@ -162,8 +162,8 @@ function getTimeStamp() {
    	    <antcall target="scm-migration:svn2baregit:validations"/>  
    	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:svn2baregit:init"/>
-    	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
-    	<antcall target="scm-migration:svn2baregit:migrate-tags"/>
+<!--     	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
+    	<antcall target="scm-migration:svn2baregit:migrate-tags"/>  -->
     	<techo taskname="scm-migration" message="[end] SVN2BAREGIT main"/>
    	</target> 
    
