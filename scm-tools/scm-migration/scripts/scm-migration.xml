@@ -207,7 +207,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:craete-template-branch"/>
     	    <param name="run-command.executable" value="git"/>
-    	    <param name="run-command.command.line" value="checkout -b templateScmMigration ."/>
+    	    <param name="run-command.command.line" value="checkout -b templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
@@ -219,7 +219,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
-    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/trunk"/>
+    	    <param name="run-command.command.line" value="checkout ${svn.repository.url}/trunk ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
