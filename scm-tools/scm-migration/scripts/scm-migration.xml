@@ -162,7 +162,6 @@ function getTimeStamp() {
    	    <antcall target="scm-migration:svn2baregit:validations"/>  
    	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:svn2baregit:init"/>
-    	<antcall target="scm-migration:svn2baregit:migrate-master"/>
     	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
     	<antcall target="scm-migration:svn2baregit:migrate-tags"/>
     	<techo taskname="scm-migration" message="[end] SVN2BAREGIT main"/>
@@ -225,6 +224,7 @@ function getTimeStamp() {
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
     	    <param name="run-command.executable" value="${basedir}/fillEmptyFolders.sh"/>
+    	    <param name="run-command.command.line" value=""/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
