@@ -219,12 +219,18 @@ function getTimeStamp() {
    	<target name="scm-migration:svn2baregit:clearance">
     	<techo taskname="scm-migration"  message="[start] svn2baregit clearance"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:craete-template-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:switch-to-master"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="checkout master"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:delete-template-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="branch -D templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
- 		<techo taskname="scm-migration" message="[end] svn2baregit clearance"/>
+    	<techo taskname="scm-migration" message="[end] svn2baregit clearance"/>
    	</target> 
    
    	<target name="scm-migration:svn2baregit:svn-trunk2git-master">
