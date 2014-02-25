@@ -411,6 +411,12 @@ function getTimeStamp() {
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:switch-templatebranch"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="checkout templateScmMigration"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	</antcall>
+    	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:svn2baregit:delete-temp-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="branch -D temp-${current.tag}"/>
