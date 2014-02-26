@@ -155,23 +155,23 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[end] cvs2svn"/>
    	</target> 
 
-   	<!-- SVN2BAREGIT targets -->
+   	<!-- blackout-svn2git targets -->
    	
-   	<target name="scm-migration:svn2baregit:main">
-    	<techo taskname="scm-migration" message="[start] SVN2BAREGIT main"/>
-   	    <antcall target="scm-migration:svn2baregit:validations"/>  
+   	<target name="scm-migration:blackout-svn2git:main">
+    	<techo taskname="scm-migration" message="[start] blackout-svn2git main"/>
+   	    <antcall target="scm-migration:blackout-svn2git:validations"/>  
    	    <antcall target="scm-migration:init"/>  
-    	<antcall target="scm-migration:svn2baregit:init"/>
-    	<antcall target="scm-migration:svn2baregit:svn-trunk2git-master"/>
-     	<antcall target="scm-migration:svn2baregit:migrate-branches"/>
-		<antcall target="scm-migration:svn2baregit:migrate-tags"/>
-    	<antcall target="scm-migration:svn2baregit:clearance"/>
+    	<antcall target="scm-migration:blackout-svn2git:init"/>
+    	<antcall target="scm-migration:blackout-svn2git:svn-trunk2git-master"/>
+     	<antcall target="scm-migration:blackout-svn2git:migrate-branches"/>
+		<antcall target="scm-migration:blackout-svn2git:migrate-tags"/>
+    	<antcall target="scm-migration:blackout-svn2git:clearance"/>
     	<antcall target="scm-migration:aggressive-gc"/>  
    	    <antcall target="scm-migration:git-push"/>
-    	<techo taskname="scm-migration" message="[end] SVN2BAREGIT main"/>
+    	<techo taskname="scm-migration" message="[end] blackout-svn2git main"/>
    	</target> 
    
-   	<target name="scm-migration:svn2baregit:validations">
+   	<target name="scm-migration:blackout-svn2git:validations">
     	<techo taskname="scm-migration"  message="[start] validations"/>
     	<fail message="Repository name (property name: repository.name) wasn't defined" unless="repository.name"/>
     	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
@@ -184,84 +184,84 @@ function getTimeStamp() {
  		<techo taskname="scm-migration" message="[end] validations"/>
    	</target> 
    
-   	<target name="scm-migration:svn2baregit:init">
-    	<techo taskname="scm-migration"  message="[start] svn2baregit init"/>
+   	<target name="scm-migration:blackout-svn2git:init">
+    	<techo taskname="scm-migration"  message="[start] blackout-svn2git init"/>
   		<delete dir="${scm-migration.work.folder}/git/${repository.name}"/>
   		<mkdir dir="${scm-migration.work.folder}/git/${repository.name}"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:git-init"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:git-init"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="init"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<copy tofile="${scm-migration.work.folder}/git/${repository.name}/.gitignore" file="${gitignore.file.path}"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-gitignore"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:add-gitignore"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="add --all"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-gitignore"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:commit-gitignore"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="commit -a -m &quot;ScmMigration - add .gitignore&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:craete-template-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:craete-template-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout -b templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
- 		<techo taskname="scm-migration" message="[end] svn2baregit init"/>
+ 		<techo taskname="scm-migration" message="[end] blackout-svn2git init"/>
    	</target> 
    
-   	<target name="scm-migration:svn2baregit:clearance">
-    	<techo taskname="scm-migration"  message="[start] svn2baregit clearance"/>
+   	<target name="scm-migration:blackout-svn2git:clearance">
+    	<techo taskname="scm-migration"  message="[start] blackout-svn2git clearance"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:switch-to-master"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:switch-to-master"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout master"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:delete-template-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:delete-template-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="branch -D templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
-    	<techo taskname="scm-migration" message="[end] svn2baregit clearance"/>
+    	<techo taskname="scm-migration" message="[end] blackout-svn2git clearance"/>
    	</target> 
    
-   	<target name="scm-migration:svn2baregit:svn-trunk2git-master">
+   	<target name="scm-migration:blackout-svn2git:svn-trunk2git-master">
     	<techo taskname="scm-migration"  message="[start] svn-trunk2git-master"/>
     		<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:checkout-master"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:checkout-master"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout master"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/trunk ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:fill-empty-folders"/>
     	    <param name="run-command.executable" value="${basedir}/fillEmptyFolders.sh"/>
     	    <param name="run-command.command.line" value=""/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:add-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="add --all"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:commit-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="commit -q -a -m &quot;ScmMigration - master commit&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
@@ -269,7 +269,7 @@ function getTimeStamp() {
    		<techo taskname="scm-migration"  message="[end] svn-trunk2git-master"/>
    	</target> 
 
-   	<target name="scm-migration:svn2baregit:migrate-branches">
+   	<target name="scm-migration:blackout-svn2git:migrate-branches">
     	<techo taskname="scm-migration"  message="[start] migrate branches"/>
     	<loadfile srcfile="${branches.list.file}" property="branches.list"/>
     	<property name="branches.path" value="branches"/>
@@ -281,7 +281,7 @@ function getTimeStamp() {
       importClass(java.io.File);
           	      
       var branchesList = project.getProperty("branches.list");
-      self.setTaskName("scmMigration:svn2baregit:migrate-branch");
+      self.setTaskName("scmMigration:blackout-svn2git:migrate-branch");
       var branches = branchesList.split("\n");
 	  var numLines = branches.length;
 	  var i;
@@ -293,7 +293,7 @@ function getTimeStamp() {
       for (i = 0; i < numLines; i++) {
          var currentBranch = branches[i].trim();
 	      var antCall = project.createTask("antcall");
-	      antCall.setTarget("scm-migration:svn2baregit:migrate-branch"); 
+	      antCall.setTarget("scm-migration:blackout-svn2git:migrate-branch"); 
 	      var branchParam = antCall.createParam(); 
 	      branchParam.setName("current.branch"); 
 	      branchParam.setValue(currentBranch); 
@@ -305,35 +305,35 @@ function getTimeStamp() {
     	<techo taskname="scm-migration"  message="[end] migrate branches"/>
    	</target> 
 
-   	<target name="scm-migration:svn2baregit:migrate-branch">
+   	<target name="scm-migration:blackout-svn2git:migrate-branch">
     	<techo taskname="scm-migration"  message="[start] migrate branch ${current.branch}"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:create-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:create-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout -b ${current.branch} templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-branch"/>
     	    <param name="run-command.executable" value="svn"/>
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${branches.path}/${current.branch} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:fill-empty-folders"/>
     	    <param name="run-command.executable" value="${basedir}/fillEmptyFolders.sh"/>
     	    <param name="run-command.command.line" value=""/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:add-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="add --all"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:commit-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="commit -q -a -m &quot;ScmMigration - ${current.branch} commit&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
@@ -341,7 +341,7 @@ function getTimeStamp() {
     	<techo taskname="scm-migration"  message="[end] migrate branch ${current.branch}"/>
    	</target> 
    	
-   	<target name="scm-migration:svn2baregit:migrate-tags">
+   	<target name="scm-migration:blackout-svn2git:migrate-tags">
     	<techo taskname="scm-migration"  message="[start] migrate tags"/>
     	<loadfile srcfile="${tags.list.file}" property="tags.list"/>
     	<property name="tags.path" value="tags"/>
@@ -353,7 +353,7 @@ function getTimeStamp() {
       importClass(java.io.File);
           	      
       var tagsList = project.getProperty("tags.list");
-      self.setTaskName("scmMigration:svn2baregit:migrate-tag");
+      self.setTaskName("scmMigration:blackout-svn2git:migrate-tag");
       var tags = tagsList.split("\n");
 	  var numLines = tags.length;
 	  var i;
@@ -365,7 +365,7 @@ function getTimeStamp() {
       for (i = 0; i < numLines; i++) {
          var currentTag = tags[i].trim();
 	      var antCall = project.createTask("antcall");
-	      antCall.setTarget("scm-migration:svn2baregit:migrate-tag"); 
+	      antCall.setTarget("scm-migration:blackout-svn2git:migrate-tag"); 
 	      var tagParam = antCall.createParam(); 
 	      tagParam.setName("current.tag"); 
 	      tagParam.setValue(currentTag); 
@@ -377,53 +377,53 @@ function getTimeStamp() {
     	<techo taskname="scm-migration"  message="[end] migrate tags"/>
    	</target> 
 
-   	<target name="scm-migration:svn2baregit:migrate-tag">
+   	<target name="scm-migration:blackout-svn2git:migrate-tag">
     	<techo taskname="scm-migration"  message="[start] migrate tag ${current.tag}"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:create-branch-for-tag"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:create-branch-for-tag"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout -b temp-${current.tag} templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:svn-checkout-master"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-master"/>
     	    <param name="run-command.executable" value="svn"/>
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${tags.path}/${current.tag} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:fill-empty-folders"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:fill-empty-folders"/>
     	    <param name="run-command.executable" value="${basedir}/fillEmptyFolders.sh"/>
     	    <param name="run-command.command.line" value=""/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:add-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:add-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="add --all"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:commit-all-files"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:commit-all-files"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="commit -q -a -m &quot;ScmMigration - ${current.tag} commit&quot;"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:create-tag"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:create-tag"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="tag -f ${current.tag}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:switch-templatebranch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:switch-templatebranch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="checkout templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:svn2baregit:delete-temp-branch"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:delete-temp-branch"/>
     	    <param name="run-command.executable" value="git"/>
     	    <param name="run-command.command.line" value="branch -D temp-${current.tag}"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
