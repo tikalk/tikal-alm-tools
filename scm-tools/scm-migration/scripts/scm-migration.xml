@@ -177,6 +177,8 @@ function getTimeStamp() {
     	<fail message="Remote GIT URL (property name: git.remote.uri) wasn't defined" unless="git.remote.uri"/>
     	<fail message="Temporary work folder (temp.root.folder) wasn't defined" unless="temp.root.folder"/>
     	<fail message="SVN repository URL (svn.repository.url) wasn't defined" unless="svn.repository.url"/>
+    	<fail message="Branches list file path (branches.list.file) wasn't defined" unless="branches.list.file"/>
+    	<fail message="Tags list file path (tags.list.file) wasn't defined" unless="tags.list.file"/>
     	<condition property="temp.root.folder.exist">
     	    <available file="${temp.root.folder}"/>
     	</condition>
@@ -242,7 +244,7 @@ function getTimeStamp() {
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
     	<antcall target="scm-migration:general:run-command">
-    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-master"/>
+    	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-trunk"/>
     	    <param name="run-command.executable" value="svn"/>
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/trunk ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
@@ -272,7 +274,11 @@ function getTimeStamp() {
    	<target name="scm-migration:blackout-svn2git:migrate-branches">
     	<techo taskname="scm-migration"  message="[start] migrate branches"/>
     	<loadfile srcfile="${branches.list.file}" property="branches.list"/>
-    	<property name="branches.path" value="branches"/>
+    	<condition property="branches.path" value="branches">
+    	    <not>
+    	        <isset property="branches.path"/>
+    	    </not>
+    	</condition>
     	
   <script language="javascript"> <![CDATA[
 
@@ -344,7 +350,11 @@ function getTimeStamp() {
    	<target name="scm-migration:blackout-svn2git:migrate-tags">
     	<techo taskname="scm-migration"  message="[start] migrate tags"/>
     	<loadfile srcfile="${tags.list.file}" property="tags.list"/>
-    	<property name="tags.path" value="tags"/>
+    	<condition property="tags.path" value="tags">
+    	    <not>
+    	        <isset property="tags.path"/>
+    	    </not>
+    	</condition>
     	
   <script language="javascript"> <![CDATA[
 
