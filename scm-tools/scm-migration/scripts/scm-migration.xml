@@ -447,7 +447,7 @@ function getTimeStamp() {
     	<techo taskname="scm-migration" message="[start] SVN2GIT main"/>
    	    <antcall target="scm-migration:svn2git:validations"/>  
    	    <antcall target="scm-migration:init"/>  
-    	<antcall target="scm-migration:svn2git"/>
+    	<antcall target="scm-migration:svn2git-init_and_fetch"/>
     	<antcall target="scm-migration:svn2git:gitignore-file-generation"/>
    	    <antcall target="scm-migration:git-push-flow"/>  
     	<techo taskname="scm-migration" message="[end] SVN2GIT main"/>
@@ -483,6 +483,26 @@ function getTimeStamp() {
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
     	</antcall>
     	<techo taskname="scm-migration" message="[end] svn2git"/>
+   	</target>
+   	
+   	<target name="scm-migration:svn2git-init_and_fetch">
+    	<techo taskname="scm-migration" message="[start] svn2git init-and-fetch"/>
+    	<property name="svn2git.init.command.arguments" value="svn init -s --no-metadata --prefix=scmMigration/ ${svn.repository.url}"/>
+    	<mkdir dir="${scm-migration.work.folder}/git"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="${svn2git.init.command.arguments}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
+    	</antcall>
+    	<property name="svn2git.fetch.command.arguments" value="svn fetch ${svn2git.additional.arguments} --authors-file=${authors.file.path}"/>
+    	<antcall target="scm-migration:general:run-command">
+    	    <param name="run-command.task-name" value="scm-migration:svn2git"/>
+    	    <param name="run-command.executable" value="git"/>
+    	    <param name="run-command.command.line" value="${svn2git.fetch.command.arguments}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git"/>
+    	</antcall>
+    	<techo taskname="scm-migration" message="[end] svn2git init-and-fetch"/>
    	</target>
    	
    	<target name="scm-migration:svn2git:gitignore-file-generation" if="gitignore.generate">
