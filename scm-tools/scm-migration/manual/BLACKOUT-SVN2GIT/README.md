@@ -33,8 +33,8 @@ For using the BLACKOUT-SVN2GIT script, follow those instructions:
 **temp.root.folder** | Path to a temp folder were the tool will create a temporary work folder | /Users/scmMigration/temp
 **gitignore.file.path** | Path to .gitignore template file that will be injected to the root of all branches and tags (can be an empty file) | /Users/scmMigration/java.gitignore
 **svn.repository.url** | SVN repository URL | http://scmserver/svnrepo/tikal-alm-tools
-**branches.list.file** | Full path to branches-list file as described in the prerequisites section | /Users/scmMigration/branches.lst
-**tags.list.file** | Full path to tags-list file as described in the prerequisites section | /Users/scmMigration/tags.lst
+**branches.list.file** | Full path to branches-list file as described in the prerequisites section. This argument must be set, but can be set to empty path in case of no needed branches. You cannot have a link to an empty text file. | /Users/scmMigration/branches.lst
+**tags.list.file** | Full path to tags-list file as described in the prerequisites section. This argument must be set, but can be set to empty path in case of no needed tags. You cannot have a link to an empty text file. | /Users/scmMigration/tags.lst
 **branches.path** | Optional relative path of the branches root URL. Defaulted (if not set) to 'branches' | branches/developement
 **tags.path** | Optional relative path of the tags root URL. Defaulted (if not set) to 'tags' | tags/release
 ## BLACKOUT-SVN2GIT script activation
