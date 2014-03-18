@@ -163,8 +163,18 @@ function getTimeStamp() {
    	    <antcall target="scm-migration:init"/>  
     	<antcall target="scm-migration:blackout-svn2git:init"/>
     	<antcall target="scm-migration:blackout-svn2git:svn-trunk2git-master"/>
+    	<condition property="migrate-branches">
+    	    <not>
+    	        <equals arg1="${branches.list.file}" arg2=""/>
+    	    </not>
+    	</condition>
      	<antcall target="scm-migration:blackout-svn2git:migrate-branches"/>
-		<antcall target="scm-migration:blackout-svn2git:migrate-tags"/>
+    	<condition property="migrate-tags">
+    	    <not>
+    	        <equals arg1="${tags.list.file}" arg2=""/>
+    	    </not>
+    	</condition>
+     	<antcall target="scm-migration:blackout-svn2git:migrate-tags"/>
     	<antcall target="scm-migration:blackout-svn2git:clearance"/>
     	<antcall target="scm-migration:aggressive-gc"/>  
    	    <antcall target="scm-migration:git-push"/>
@@ -271,7 +281,7 @@ function getTimeStamp() {
    		<techo taskname="scm-migration"  message="[end] svn-trunk2git-master"/>
    	</target> 
 
-   	<target name="scm-migration:blackout-svn2git:migrate-branches">
+   	<target name="scm-migration:blackout-svn2git:migrate-branches" if="migrate-branches">
     	<techo taskname="scm-migration"  message="[start] migrate branches"/>
     	<loadfile srcfile="${branches.list.file}" property="branches.list"/>
     	<condition property="branches.path" value="branches">
@@ -347,7 +357,7 @@ function getTimeStamp() {
     	<techo taskname="scm-migration"  message="[end] migrate branch ${current.branch}"/>
    	</target> 
    	
-   	<target name="scm-migration:blackout-svn2git:migrate-tags">
+   	<target name="scm-migration:blackout-svn2git:migrate-tags" if="migrate-tags">
     	<techo taskname="scm-migration"  message="[start] migrate tags"/>
     	<loadfile srcfile="${tags.list.file}" property="tags.list"/>
     	<condition property="tags.path" value="tags">
