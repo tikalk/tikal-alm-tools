@@ -329,12 +329,18 @@ function getTimeStamp() {
     	    <param name="run-command.command.line" value="checkout -b ${current.branch} templateScmMigration"/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
     	</antcall>
+    	<delete dir="${scm-migration.work.folder}/git/temp"/>
+    	<mkdir dir="${scm-migration.work.folder}/git/temp"/>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:svn-checkout-branch"/>
     	    <param name="run-command.executable" value="svn"/>
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${branches.path}/${current.branch} ."/>
-    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/${repository.name}"/>
+    	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/temp"/>
     	</antcall>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}">
+    		<fileset dir="${scm-migration.work.folder}/git/temp"/>    
+    	</copy>
+    	<delete dir="${scm-migration.work.folder}/git/temp"/>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
     	    <param name="run-command.task-name" value="scm-migration:blackout-svn2git:fill-empty-folders"/>
