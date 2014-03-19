@@ -342,7 +342,9 @@ function getTimeStamp() {
     	        <exclude name=".gitignore"/>
     	    </fileset>
     	</delete>
-    	<copy todir="${scm-migration.work.folder}/git/${repository.name}"/>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}">
+    	    <fileset dir="${scm-migration.work.folder}/git/temp"/>
+    	</copy>
     	<delete dir="${scm-migration.work.folder}/git/temp"/>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
@@ -427,7 +429,9 @@ function getTimeStamp() {
     	        <exclude name=".gitignore"/>
     	    </fileset>
     	</delete>
-    	<copy todir="${scm-migration.work.folder}/git/${repository.name}"/>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}">
+    	    <fileset dir="${scm-migration.work.folder}/git/temp"/>
+    	</copy>
     	<delete dir="${scm-migration.work.folder}/git/temp"/>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
