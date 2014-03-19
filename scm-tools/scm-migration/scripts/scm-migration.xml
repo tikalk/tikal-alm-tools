@@ -337,9 +337,12 @@ function getTimeStamp() {
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${branches.path}/${current.branch} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/temp"/>
     	</antcall>
-    	<copy todir="${scm-migration.work.folder}/git/${repository.name}">
-    		<fileset dir="${scm-migration.work.folder}/git/temp"/>    
-    	</copy>
+    	<delete>
+    	    <fileset dir="${scm-migration.work.folder}/git/${repository.name}">
+    	        <exclude name=".gitignore"/>
+    	    </fileset>
+    	</delete>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}"/>
     	<delete dir="${scm-migration.work.folder}/git/temp"/>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
@@ -419,9 +422,12 @@ function getTimeStamp() {
     	    <param name="run-command.command.line" value="checkout -q ${svn.repository.url}/${tags.path}/${current.tag} ."/>
     	    <param name="run-command.dir" value="${scm-migration.work.folder}/git/temp"/>
     	</antcall>
-    	<copy todir="${scm-migration.work.folder}/git/${repository.name}">
-    		<fileset dir="${scm-migration.work.folder}/git/temp"/>    
-    	</copy>
+    	<delete>
+    	    <fileset dir="${scm-migration.work.folder}/git/${repository.name}">
+    	        <exclude name=".gitignore"/>
+    	    </fileset>
+    	</delete>
+    	<copy todir="${scm-migration.work.folder}/git/${repository.name}"/>
     	<delete dir="${scm-migration.work.folder}/git/temp"/>
     	<delete dir="${scm-migration.work.folder}/git/${repository.name}/.svn"/>
     	<antcall target="scm-migration:general:run-command">
