@@ -545,6 +545,7 @@ function getTimeStamp() {
 
       // import statements
       // importPackage(java.io);
+      load("nashorn:mozilla_compat.js");
       importClass(java.io.File);
 
 	String.prototype.startsWith = function(s)
